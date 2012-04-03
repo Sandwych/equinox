@@ -22,13 +22,13 @@
     "name" : "中文报表支持",
     "version" : "6.1.1",
     "author" : "Sandwych Consulting Limited.",
-    "maintainer":"liwei@sandwych.com",
+    "maintainer":"Wei Li <liwei@sandwych.com>",
     "website": "http://www.sandwych.com",
     "description": """
         PDF 中文报表支持
 
         安装此模块以后 PDF 报表的页眉页脚也还可能仍为乱码。
-        若出现此情况请进入系统“公司”设置中将“页眉页脚里的“DejaVu Sans”等字体设置去掉后保存即可。
+        若出现此情况请进入系统“公司”设置中将“页眉页脚里的“DejaVu Sans 英文”等字体设置换成“WenQuanYi Zen Hei”后保存即可。
     """,
     "depends" : ["base"],
     "category" : "Generic Modules/Base",

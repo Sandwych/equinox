@@ -26,6 +26,9 @@ from reportlab.lib.styles import ParagraphStyle
 from openerp.tools.config import config
 
 __MODULE_NAME = 'sandwych_pdf_zhcn'
+__SANS_FONT = 'WenQuanYi Zen Hei'
+__MONO_FONT = 'WenQuanYi Zen Hei Mono'
+__SERIF_FONT = 'AR PL SungtiL GB'
 
 try:
     import openerp.report.render.rml2pdf.customfonts as cfonts
@@ -50,37 +53,37 @@ for k, v in cfonts.TTFSearchPathMap.iteritems():
 
 # 修改字体映射
 cfonts.CustomTTFonts = [ 
-    ('Helvetica',"WenQuanYi Zen Hei", "hei.ttc", 'normal'),
-    ('Helvetica',"WenQuanYi Zen Hei", "hei.ttc", 'bold'),
-    ('Helvetica',"WenQuanYi Zen Hei", "hei.ttc", 'italic'),
-    ('Helvetica',"WenQuanYi Zen Hei", "hei.ttc", 'bolditalic'),
-    ('Times',"AR PL SungtiL GB", "song.ttf", 'normal'),
-    ('Times',"AR PL SungtiL GB", "song.ttf", 'bold'),
-    ('Times',"AR PL SungtiL GB", "song.ttf", 'italic'),
-    ('Times',"AR PL SungtiL GB", "song.ttf", 'bolditalic'),
-    ('Times-Roman',"AR PL SungtiL GB", "song.ttf", 'normal'),
-    ('Times-Roman',"AR PL SungtiL GB", "song.ttf", 'bold'),
-    ('Times-Roman',"AR PL SungtiL GB", "song.ttf", 'italic'),
-    ('Times-Roman',"AR PL SungtiL GB", "song.ttf", 'bolditalic'),
-    ('Courier',"WenQuanYi Zen Hei", "hei.ttc", 'normal'),
-    ('Courier',"WenQuanYi Zen Hei", "hei.ttc", 'bold'),
-    ('Courier',"WenQuanYi Zen Hei", "hei.ttc", 'italic'),
-    ('Courier',"WenQuanYi Zen Hei", "hei.ttc", 'bolditalic'),
+    ('Helvetica', __SANS_FONT, "hei.ttc", 'normal'),
+    ('Helvetica', __SANS_FONT, "hei.ttc", 'bold'),
+    ('Helvetica', __SANS_FONT, "hei.ttc", 'italic'),
+    ('Helvetica', __SANS_FONT, "hei.ttc", 'bolditalic'),
+    ('Times', __SERIF_FONT, "song.ttf", 'normal'),
+    ('Times', __SERIF_FONT, "song.ttf", 'bold'),
+    ('Times', __SERIF_FONT, "song.ttf", 'italic'),
+    ('Times', __SERIF_FONT, "song.ttf", 'bolditalic'),
+    ('Times-Roman', __SERIF_FONT, "song.ttf", 'normal'),
+    ('Times-Roman', __SERIF_FONT, "song.ttf", 'bold'),
+    ('Times-Roman', __SERIF_FONT, "song.ttf", 'italic'),
+    ('Times-Roman', __SERIF_FONT, "song.ttf", 'bolditalic'),
+    ('Courier', __MONO_FONT, "hei.ttc", 'normal'),
+    ('Courier', __MONO_FONT, "hei.ttc", 'bold'),
+    ('Courier', __MONO_FONT, "hei.ttc", 'italic'),
+    ('Courier', __MONO_FONT, "hei.ttc", 'bolditalic'),
 
     # 为公司默认设置的页眉/页脚处理字体
-    ('DejaVu Sans',"WenQuanYi Zen Hei", "hei.ttc", 'normal'),
-    ('DejaVu Sans Bold',"WenQuanYi Zen Hei", "hei.ttc", 'bold'),
-    ('DejaVuSans',"WenQuanYi Zen Hei", "hei.ttc", 'normal'),
-    ('DejaVuSansBold',"WenQuanYi Zen Hei", "hei.ttc", 'bold'),
+    ('DejaVu Sans', __SANS_FONT, "hei.ttc", 'normal'),
+    ('DejaVu Sans Bold', __SANS_FONT, "hei.ttc", 'bold'),
+    ('DejaVuSans', __SANS_FONT, "hei.ttc", 'normal'),
+    ('DejaVuSansBold', __SANS_FONT, "hei.ttc", 'bold'),
 
     # Alias for custom reports
-    ('SimHei',"WenQuanYi Zen Hei", "hei.ttc", 'normal'),
-    ('SimHei',"WenQuanYi Zen Hei", "hei.ttc", 'bold'),
-    ('SimHei',"WenQuanYi Zen Hei", "hei.ttc", 'italic'),
-    ('SimHei',"WenQuanYi Zen Hei", "hei.ttc", 'bolditalic'),
-    ('SimSun',"song", "song.ttf", 'normal'),
-    ('SimSun',"song", "song.ttf", 'bold'),
-    ('SimSun',"song", "song.ttf", 'italic'),
-    ('SimSun',"song", "song.ttf", 'bolditalic'),
+    ('SimHei', __SANS_FONT, "hei.ttc", 'normal'),
+    ('SimHei', __SANS_FONT, "hei.ttc", 'bold'),
+    ('SimHei', __SANS_FONT, "hei.ttc", 'italic'),
+    ('SimHei', __SANS_FONT, "hei.ttc", 'bolditalic'),
+    ('SimSun', __SERIF_FONT, "song.ttf", 'normal'),
+    ('SimSun', __SERIF_FONT, "song.ttf", 'bold'),
+    ('SimSun', __SERIF_FONT, "song.ttf", 'italic'),
+    ('SimSun', __SERIF_FONT, "song.ttf", 'bolditalic'),
 ]
 
