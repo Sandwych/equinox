@@ -1,0 +1,204 @@
+<?xml version="1.0"?>
+<openerp>
+	<data>
+
+        <!-- 更新公司设置，配合 sandwych_pdf_zhcn 模块解决 PDF 报表页眉页脚乱码问题 -->
+        <record id="base.main_company" model="res.company">
+            <field name="name">您的公司名称</field>
+            <field name="currency_id" ref="base.CNY" />
+            <field name="rml_header"><![CDATA[
+                <header>
+                <pageTemplate>
+                    <frame id="first" x1="1.3cm" y1="2.5cm" height="23.0cm" width="19.0cm"/>
+                    <pageGraphics>
+                        <!-- You Logo - Change X,Y,Width and Height -->
+                        <image x="1.3cm" y="27.6cm" height="40.0" >[[ company.logo or removeParentNode('image') ]]</image>
+                        <setFont name="WenQuanYi Zen Hei" size="8"/>
+                        <fill color="black"/>
+                        <stroke color="black"/>
+                        <lines>1.3cm 27.7cm 20cm 27.7cm</lines>
+
+                        <drawRightString x="20cm" y="27.8cm">[[ company.rml_header1 ]]</drawRightString>
+
+
+                        <drawString x="1.3cm" y="27.2cm">[[ company.partner_id.name ]]</drawString>
+                        <drawString x="1.3cm" y="26.8cm">[[ company.partner_id.address and company.partner_id.address[0].street or  '' ]]</drawString>
+                        <drawString x="1.3cm" y="26.4cm">[[ company.partner_id.address and company.partner_id.address[0].zip or '' ]] [[ company.partner_id.address and company.partner_id.address[0].city or '' ]] - [[ company.partner_id.address and company.partner_id.address[0].country_id and company.partner_id.address[0].country_id.name  or '']]</drawString>
+                        <drawString x="1.3cm" y="26.0cm">联系电话：</drawString>
+                        <drawRightString x="7cm" y="26.0cm">[[ company.partner_id.address and company.partner_id.address[0].phone or '' ]]</drawRightString>
+                        <drawString x="1.3cm" y="25.6cm">电子邮件：</drawString>
+                        <drawRightString x="7cm" y="25.6cm">[[ company.partner_id.address and company.partner_id.address[0].email or '' ]]</drawRightString>
+                        <lines>1.3cm 25.5cm 7cm 25.5cm</lines>
+
+                        <!--page bottom-->
+
+                        <lines>1.2cm 2.15cm 19.9cm 2.15cm</lines>
+
+                        <drawCentredString x="10.5cm" y="1.7cm">[[ company.rml_footer1 ]]</drawCentredString>
+                        <drawCentredString x="10.5cm" y="1.25cm">[[ company.rml_footer2 ]]</drawCentredString>
+                        <drawCentredString x="10.5cm" y="0.8cm">Contact : [[ user.name ]] - Page: <pageNumber/></drawCentredString>
+                    </pageGraphics>
+                </pageTemplate>
+            </header>
+            ]]>
+            </field>
+        </record>
+
+        <!-- 添加省份数据 -->
+        <record id="state_BJ" model="res.country.state">
+            <field name="name">北京市</field>
+            <field name="code">BJ11</field>
+            <field name="country_id" ref="base.cn"/>
+        </record>
+        <record id="state_SH" model="res.country.state">
+            <field name="name">上海市</field>
+            <field name="code">SH31</field>
+            <field name="country_id" ref="base.cn"/>
+        </record>
+        <record id="state_ZJ" model="res.country.state">
+            <field name="name">浙江省</field>
+            <field name="code">ZJ33</field>
+            <field name="country_id" ref="base.cn"/>
+        </record>
+        <record id="state_TJ" model="res.country.state">
+            <field name="name">天津市</field>
+            <field name="code">TJ12</field>
+            <field name="country_id" ref="base.cn"/>
+        </record>
+        <record id="state_AH" model="res.country.state">
+            <field name="name">安徽省</field>
+            <field name="code">AH34</field>
+            <field name="country_id" ref="base.cn"/>
+        </record>
+        <record id="state_FJ" model="res.country.state">
+            <field name="name">福建省</field>
+            <field name="code">FJ35</field>
+            <field name="country_id" ref="base.cn"/>
+        </record>
+        <record id="state_CQ" model="res.country.state">
+            <field name="name">重庆市</field>
+            <field name="code">CQ50</field>
+            <field name="country_id" ref="base.cn"/>
+        </record>
+        <record id="state_JX" model="res.country.state">
+            <field name="name">江西省</field>
+            <field name="code">JX36</field>
+            <field name="country_id" ref="base.cn"/>
+        </record>
+        <record id="state_SD" model="res.country.state">
+            <field name="name">山东省</field>
+            <field name="code">SD37</field>
+            <field name="country_id" ref="base.cn"/>
+        </record>
+        <record id="state_HeN" model="res.country.state">
+            <field name="name">河南省</field>
+            <field name="code">HA41</field>
+            <field name="country_id" ref="base.cn"/>
+        </record>
+        <record id="state_NM" model="res.country.state">
+            <field name="name">内蒙古自治区</field>
+            <field name="code">NM15</field>
+            <field name="country_id" ref="base.cn"/>
+        </record>
+        <record id="state_HuB" model="res.country.state">
+            <field name="name">湖北省</field>
+            <field name="code">HB42</field>
+            <field name="country_id" ref="base.cn"/>
+        </record>
+        <record id="state_XJ" model="res.country.state">
+            <field name="name">新疆维吾尔自治区</field>
+            <field name="code">XJ65</field>
+            <field name="country_id" ref="base.cn"/>
+        </record>
+        <record id="state_HuN" model="res.country.state">
+            <field name="name">湖南省</field>
+            <field name="code">HN43</field>
+            <field name="country_id" ref="base.cn"/>
+        </record>
+        <record id="state_NX" model="res.country.state">
+            <field name="name">宁夏回族自治区</field>
+            <field name="code">NX64</field>
+            <field name="country_id" ref="base.cn"/>
+        </record>
+        <record id="state_GD" model="res.country.state">
+            <field name="name">广东省</field>
+            <field name="code">GD44</field>
+            <field name="country_id" ref="base.cn"/>
+        </record>
+        <record id="state_XZ" model="res.country.state">
+            <field name="name">西藏自治区</field>
+            <field name="code">XZ54</field>
+            <field name="country_id" ref="base.cn"/>
+        </record>
+        <record id="state_HaN" model="res.country.state">
+            <field name="name">海南省</field>
+            <field name="code">HI46</field>
+            <field name="country_id" ref="base.cn"/>
+        </record>
+        <record id="state_GX" model="res.country.state">
+            <field name="name">广西壮族自治区</field>
+            <field name="code">GX45</field>
+            <field name="country_id" ref="base.cn"/>
+        </record>
+        <record id="state_SC" model="res.country.state">
+            <field name="name">四川省</field>
+            <field name="code">SC51</field>
+            <field name="country_id" ref="base.cn"/>
+        </record>
+        <record id="state_HeB" model="res.country.state">
+            <field name="name">河北省</field>
+            <field name="code">HE13</field>
+            <field name="country_id" ref="base.cn"/>
+        </record>
+        <record id="state_GZ" model="res.country.state">
+            <field name="name">贵州省</field>
+            <field name="code">GZ52</field>
+            <field name="country_id" ref="base.cn"/>
+        </record>
+        <record id="state_SX" model="res.country.state">
+            <field name="name">山西省</field>
+            <field name="code">SX14</field>
+            <field name="country_id" ref="base.cn"/>
+        </record>
+        <record id="state_YN" model="res.country.state">
+            <field name="name">云南省</field>
+            <field name="code">YN53</field>
+            <field name="country_id" ref="base.cn"/>
+        </record>
+        <record id="state_LN" model="res.country.state">
+            <field name="name">辽宁省</field>
+            <field name="code">LN21</field>
+            <field name="country_id" ref="base.cn"/>
+        </record>
+        <record id="state_SX" model="res.country.state">
+            <field name="name">陕西省</field>
+            <field name="code">SN61</field>
+            <field name="country_id" ref="base.cn"/>
+        </record>
+        <record id="state_JL" model="res.country.state">
+            <field name="name">吉林省</field>
+            <field name="code">JL22</field>
+            <field name="country_id" ref="base.cn"/>
+        </record>
+        <record id="state_GS" model="res.country.state">
+            <field name="name">甘肃省</field>
+            <field name="code">GS62</field>
+            <field name="country_id" ref="base.cn"/>
+        </record>
+        <record id="state_HL" model="res.country.state">
+            <field name="name">黑龙江省</field>
+            <field name="code">HL23</field>
+            <field name="country_id" ref="base.cn"/>
+        </record>
+        <record id="state_QH" model="res.country.state">
+            <field name="name">青海省</field>
+            <field name="code">QH63</field>
+            <field name="country_id" ref="base.cn"/>
+        </record>
+        <record id="state_JS" model="res.country.state">
+            <field name="name">江苏省</field>
+            <field name="code">JS32</field>
+            <field name="country_id" ref="base.cn"/>
+        </record>
+    </data>
+</openerp>

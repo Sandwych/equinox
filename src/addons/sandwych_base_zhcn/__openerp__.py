@@ -19,23 +19,24 @@
 #
 ##############################################################################
 {
-    "name" : "中文报表支持",
+    "name" : "基本系统中文支持",
     "version" : "0.1",
     "author" : "Sandwych Consulting Limited.",
     "maintainer":"Wei Li <liwei@sandwych.com>",
     "website": "http://www.sandwych.com",
     "description": """
-        PDF 中文报表支持
+        基本系统中文支持
 
-        安装此模块以后 PDF 报表的页眉页脚也还可能仍为乱码。
-        若出现此情况请进入系统“公司”设置中将“页眉页脚里的“DejaVu Sans 英文”等字体设置换成“WenQuanYi Zen Hei”后保存即可。
+        此模块将在创建数据库时自动安装
+        1. 将默认的本位币从欧元设置为人民币，并调整汇率
+        2. 重新设置公司的页眉页脚解决乱码问题
     """,
-    "depends" : ["base"],
+    "depends" : ['base', 'sandwych_pdf_zhcn'],
     "category" : "Generic Modules/Base",
     "demo_xml" : [],
-    "update_xml" : [],
+    "update_xml" : ['base_data.xml'],
     "license": "GPL-3",
-    "active": False,
+    "active": True,
     "installable": True
 }
 
