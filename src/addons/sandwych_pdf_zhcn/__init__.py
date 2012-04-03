@@ -69,6 +69,7 @@ cfonts.CustomTTFonts = [
     ('Courier', __MONO_FONT, "hei.ttc", 'bold'),
     ('Courier', __MONO_FONT, "hei.ttc", 'italic'),
     ('Courier', __MONO_FONT, "hei.ttc", 'bolditalic'),
+    ('Monospace', __MONO_FONT, "hei.ttc", 'bolditalic'),
 
     # 为公司默认设置的页眉/页脚处理字体
     ('DejaVu Sans', __SANS_FONT, "hei.ttc", 'normal'),
