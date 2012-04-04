@@ -35,8 +35,8 @@
     "demo_xml" : [],
     "update_xml" : [],
     "license": "GPL-3",
-    "active": False,
-    "installable": True
+    "installable": True,
+    "auto_install": False,
 }
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
