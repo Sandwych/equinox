@@ -42,8 +42,9 @@ def find_font_path():
         if path.isdir(my_path):
             return my_path
 
-    raise IOError('Cannot found path 'sandwych_pdf_zhcn' in 'addons_path'')
+    raise IOError('Cannot found path "sandwych_pdf_zhcn" in "addons_path"')
 
+#设置中文换行
 ParagraphStyle.defaults['wordWrap'] = 'CJK'
 
 my_font_path = find_font_path()
