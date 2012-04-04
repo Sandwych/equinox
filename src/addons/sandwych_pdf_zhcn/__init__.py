@@ -22,18 +22,18 @@
 from osv import osv
 from os import path
 
-from reportlab.lib.styles import ParagraphStyle
 from openerp.tools.config import config
-
-__MODULE_NAME = 'sandwych_pdf_zhcn'
-__SANS_FONT = 'WenQuanYi Zen Hei'
-__MONO_FONT = 'WenQuanYi Zen Hei Mono'
-__SERIF_FONT = 'AR PL SungtiL GB'
-
+from reportlab.lib.styles import ParagraphStyle
 try:
     import openerp.report.render.rml2pdf.customfonts as cfonts
 except ImportError:
     import report.render.rml2pdf.customfonts as cfonts
+
+# 方便的常量
+__MODULE_NAME = 'sandwych_pdf_zhcn'
+__SANS_FONT = 'WenQuanYi Zen Hei'
+__MONO_FONT = 'WenQuanYi Zen Hei Mono'
+__SERIF_FONT = 'AR PL SungtiL GB'
 
 def find_font_path():
     paths = config['addons_path'].split(',')
@@ -42,8 +42,9 @@ def find_font_path():
         if path.isdir(my_path):
             return my_path
 
-    raise IOError("Cannot found path 'sandwych_pdf_zhcn' in 'addons_path'")
+    raise IOError('Cannot found path 'sandwych_pdf_zhcn' in 'addons_path'')
 
+ParagraphStyle.defaults['wordWrap'] = 'CJK'
 
 my_font_path = find_font_path()
 
@@ -53,38 +54,38 @@ for k, v in cfonts.TTFSearchPathMap.iteritems():
 
 # 修改字体映射
 cfonts.CustomTTFonts = [ 
-    ('Helvetica', __SANS_FONT, "hei.ttc", 'normal'),
-    ('Helvetica', __SANS_FONT, "hei.ttc", 'bold'),
-    ('Helvetica', __SANS_FONT, "hei.ttc", 'italic'),
-    ('Helvetica', __SANS_FONT, "hei.ttc", 'bolditalic'),
-    ('Times', __SERIF_FONT, "song.ttf", 'normal'),
-    ('Times', __SERIF_FONT, "song.ttf", 'bold'),
-    ('Times', __SERIF_FONT, "song.ttf", 'italic'),
-    ('Times', __SERIF_FONT, "song.ttf", 'bolditalic'),
-    ('Times-Roman', __SERIF_FONT, "song.ttf", 'normal'),
-    ('Times-Roman', __SERIF_FONT, "song.ttf", 'bold'),
-    ('Times-Roman', __SERIF_FONT, "song.ttf", 'italic'),
-    ('Times-Roman', __SERIF_FONT, "song.ttf", 'bolditalic'),
-    ('Courier', __MONO_FONT, "hei.ttc", 'normal'),
-    ('Courier', __MONO_FONT, "hei.ttc", 'bold'),
-    ('Courier', __MONO_FONT, "hei.ttc", 'italic'),
-    ('Courier', __MONO_FONT, "hei.ttc", 'bolditalic'),
-    ('Monospace', __MONO_FONT, "hei.ttc", 'bolditalic'),
+    ('Helvetica', __SANS_FONT, 'hei.ttc', 'normal'),
+    ('Helvetica', __SANS_FONT, 'hei.ttc', 'bold'),
+    ('Helvetica', __SANS_FONT, 'hei.ttc', 'italic'),
+    ('Helvetica', __SANS_FONT, 'hei.ttc', 'bolditalic'),
+    ('Times', __SERIF_FONT, 'song.ttf', 'normal'),
+    ('Times', __SERIF_FONT, 'song.ttf', 'bold'),
+    ('Times', __SERIF_FONT, 'song.ttf', 'italic'),
+    ('Times', __SERIF_FONT, 'song.ttf', 'bolditalic'),
+    ('Times-Roman', __SERIF_FONT, 'song.ttf', 'normal'),
+    ('Times-Roman', __SERIF_FONT, 'song.ttf', 'bold'),
+    ('Times-Roman', __SERIF_FONT, 'song.ttf', 'italic'),
+    ('Times-Roman', __SERIF_FONT, 'song.ttf', 'bolditalic'),
+    ('Courier', __MONO_FONT, 'hei.ttc', 'normal'),
+    ('Courier', __MONO_FONT, 'hei.ttc', 'bold'),
+    ('Courier', __MONO_FONT, 'hei.ttc', 'italic'),
+    ('Courier', __MONO_FONT, 'hei.ttc', 'bolditalic'),
+    ('Monospace', __MONO_FONT, 'hei.ttc', 'bolditalic'),
 
     # 为公司默认设置的页眉/页脚处理字体
-    ('DejaVu Sans', __SANS_FONT, "hei.ttc", 'normal'),
-    ('DejaVu Sans Bold', __SANS_FONT, "hei.ttc", 'bold'),
-    ('DejaVuSans', __SANS_FONT, "hei.ttc", 'normal'),
-    ('DejaVuSansBold', __SANS_FONT, "hei.ttc", 'bold'),
+    ('DejaVu Sans', __SANS_FONT, 'hei.ttc', 'normal'),
+    ('DejaVu Sans Bold', __SANS_FONT, 'hei.ttc', 'bold'),
+    ('DejaVuSans', __SANS_FONT, 'hei.ttc', 'normal'),
+    ('DejaVuSansBold', __SANS_FONT, 'hei.ttc', 'bold'),
 
     # Alias for custom reports
-    ('SimHei', __SANS_FONT, "hei.ttc", 'normal'),
-    ('SimHei', __SANS_FONT, "hei.ttc", 'bold'),
-    ('SimHei', __SANS_FONT, "hei.ttc", 'italic'),
-    ('SimHei', __SANS_FONT, "hei.ttc", 'bolditalic'),
-    ('SimSun', __SERIF_FONT, "song.ttf", 'normal'),
-    ('SimSun', __SERIF_FONT, "song.ttf", 'bold'),
-    ('SimSun', __SERIF_FONT, "song.ttf", 'italic'),
-    ('SimSun', __SERIF_FONT, "song.ttf", 'bolditalic'),
+    ('SimHei', __SANS_FONT, 'hei.ttc', 'normal'),
+    ('SimHei', __SANS_FONT, 'hei.ttc', 'bold'),
+    ('SimHei', __SANS_FONT, 'hei.ttc', 'italic'),
+    ('SimHei', __SANS_FONT, 'hei.ttc', 'bolditalic'),
+    ('SimSun', __SERIF_FONT, 'song.ttf', 'normal'),
+    ('SimSun', __SERIF_FONT, 'song.ttf', 'bold'),
+    ('SimSun', __SERIF_FONT, 'song.ttf', 'italic'),
+    ('SimSun', __SERIF_FONT, 'song.ttf', 'bolditalic'),
 ]
 
