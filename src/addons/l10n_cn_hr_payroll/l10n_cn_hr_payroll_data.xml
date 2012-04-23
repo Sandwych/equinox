@@ -1,0 +1,286 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+    <!-- 规则分类 -->
+    <record id="PIT" model="hr.salary.rule.category">
+        <field name="name">个人所得税</field>
+        <field name="code">PIT</field>
+        <field name="parent_id" ref="hr_payroll.DED"/>
+    </record>
+
+    <record id="COMP" model="hr.salary.rule.category">
+        <field name="name">公司缴纳部分</field>
+        <field name="code">COMP</field>
+    </record>
+
+    <record id="BT" model="hr.salary.rule.category">
+        <field name="name">税前收入</field>
+        <field name="code">BT</field>
+        <field name="parent_id" ref="hr_payroll.GROSS"/>
+    </record>
+
+    <!-- 薪酬规则 -->
+    <record id="rules_bt" model="hr.salary.rule">
+        <field name="category_id" ref="BT"/>
+        <field name="name">税前收入</field>
+        <field name="code">BT</field>
+        <field name="appears_on_payslip" eval="True"/>
+        <field name="sequence">90</field>
+        <field name="condition_select">none</field>
+        <field name="amount_select">code</field>
+        <field name="amount_python_compute">result = categories.BASIC + categories.ALW + categories.DED</field>
+    </record>
+
+    <!-- 个人社保母规则-->
+    <record id="rules_grsb" model="hr.salary.rule">
+        <field name="category_id" ref="hr_payroll.DED"/>
+        <field name="name">社保</field>
+        <field name="code">SB</field>
+        <field name="amount_select">fix</field>
+        <field name="sequence">50</field>
+        <field name="condition_select">none</field>
+        <field name="appears_on_payslip" eval="False"/>
+    </record>
+    <record id="hr_payroll_rules_gryb" model="hr.salary.rule">
+        <field name="category_id" ref="hr_payroll.DED"/>
+        <field name="parent_rule_id" ref="rules_grsb"/>
+        <field name="name">个人医保</field>
+        <field name="code">GRYB</field>
+        <field name="appears_on_payslip" eval="True"/>
+        <field name="sequence">51</field>
+        <field name="condition_select">none</field>
+        <field name="amount_select">code</field>
+        <field name="amount_python_compute">result = -(contract.social_insurance_amount * 0.02 + 3.00)</field>
+    </record>
+    <record id="hr_payroll_rules_grsybx" model="hr.salary.rule">
+        <field name="category_id" ref="hr_payroll.DED"/>
+        <field name="parent_rule_id" ref="rules_grsb"/>
+        <field name="name">个人失业保险</field>
+        <field name="code">GRSYBX</field>
+        <field name="appears_on_payslip" eval="True"/>
+        <field name="sequence">52</field>
+        <field name="condition_select">none</field>
+        <field name="amount_select">code</field>
+        <field name="amount_python_compute">result = -(contract.social_insurance_amount * 0.01)</field>
+    </record>
+    <record id="hr_payroll_rules_grylbx" model="hr.salary.rule">
+        <field name="category_id" ref="hr_payroll.DED"/>
+        <field name="parent_rule_id" ref="rules_grsb"/>
+        <field name="name">个人养老保险</field>
+        <field name="code">GRYLBX</field>
+        <field name="appears_on_payslip" eval="True"/>
+        <field name="sequence">53</field>
+        <field name="condition_select">none</field>
+        <field name="amount_select">code</field>
+        <field name="amount_python_compute">result = -(contract.social_insurance_amount * 0.08)</field>
+    </record>
+
+    <record id="rules_grgjj" model="hr.salary.rule">
+        <field name="category_id" ref="hr_payroll.DED"/>
+        <field name="name">个人公积金</field>
+        <field name="code">GRGJJ</field>
+        <field name="appears_on_payslip" eval="True"/>
+        <field name="sequence">80</field>
+        <field name="condition_select">none</field>
+        <field name="amount_select">code</field>
+        <field name="amount_python_compute">result = -(contract.social_insurance_amount * 0.12)</field>
+    </record>
+
+    <record id="rules_dygjj" model="hr.salary.rule">
+        <field name="category_id" ref="COMP" />
+        <field name="name">单位公积金</field>
+        <field name="code">DYGJJ</field>
+        <field name="appears_on_payslip" eval="True"/>
+        <field name="sequence">69</field>
+        <field name="condition_select">none</field>
+        <field name="amount_select">code</field>
+        <field name="amount_python_compute">result = contract.social_insurance_amount * 0.12</field>
+    </record>
+
+    <!-- 个人所得税母规则-->
+    <record id="rules_pit" model="hr.salary.rule">
+        <field name="category_id" ref="PIT"/>
+        <field name="name">个人所得税</field>
+        <field name="code">PIT</field>
+        <field name="amount_select">fix</field>
+        <field name="sequence">100</field>
+        <field name="condition_select">none</field>
+        <field name="appears_on_payslip" eval="False"/>
+    </record>
+
+    <record id="hr_payroll_rules_pit1" model="hr.salary.rule">
+        <field name="category_id" ref="PIT"/>
+        <field name="parent_rule_id" ref="rules_pit"/>
+        <field name="name">个人所得税</field>
+        <field name="code">PIT1</field>
+        <field name="sequence">110</field>
+        <field name="appears_on_payslip" eval="True"/>
+        <field name="condition_select">range</field>
+        <field name="condition_range">BT - contract.pit_exemption_amount</field>
+        <field name="condition_range_min">0</field>
+        <field name="condition_range_max">1500.00</field>
+        <field name="amount_select">code</field>
+        <field name="amount_python_compute">result = -((BT - contract.pit_exemption_amount) * 0.03)</field>
+    </record>
+    <record id="hr_payroll_rules_pit2" model="hr.salary.rule">
+        <field name="category_id" ref="PIT"/>
+        <field name="parent_rule_id" ref="rules_pit"/>
+        <field name="name">个人所得税</field>
+        <field name="code">PIT2</field>
+        <field name="sequence">120</field>
+        <field name="appears_on_payslip" eval="True"/>
+        <field name="condition_select">range</field>
+        <field name="condition_range">BT - contract.pit_exemption_amount</field>
+        <field name="condition_range_min">1500</field>
+        <field name="condition_range_max">4500.00</field>
+        <field name="amount_select">code</field>
+        <field name="amount_python_compute">result = -((BT - contract.pit_exemption_amount) * 0.10 - 105.00)</field>
+    </record>
+    <record id="hr_payroll_rules_pit3" model="hr.salary.rule">
+        <field name="category_id" ref="PIT"/>
+        <field name="parent_rule_id" ref="rules_pit"/>
+        <field name="name">个人所得税</field>
+        <field name="code">PIT3</field>
+        <field name="sequence">130</field>
+        <field name="appears_on_payslip" eval="True"/>
+        <field name="condition_select">range</field>
+        <field name="condition_range">BT - contract.pit_exemption_amount</field>
+        <field name="condition_range_min">4500</field>
+        <field name="condition_range_max">9000.00</field>
+        <field name="amount_select">code</field>
+        <field name="amount_python_compute">result = -((BT - contract.pit_exemption_amount) * 0.20 - 555.00)</field>
+    </record>
+    <record id="hr_payroll_rules_pit4" model="hr.salary.rule">
+        <field name="category_id" ref="PIT"/>
+        <field name="parent_rule_id" ref="rules_pit"/>
+        <field name="name">个人所得税</field>
+        <field name="code">PIT4</field>
+        <field name="sequence">140</field>
+        <field name="appears_on_payslip" eval="True"/>
+        <field name="condition_select">range</field>
+        <field name="condition_range">BT - contract.pit_exemption_amount</field>
+        <field name="condition_range_min">9000.00</field>
+        <field name="condition_range_max">35000.00</field>
+        <field name="amount_select">code</field>
+        <field name="amount_python_compute">result = -((BT - contract.pit_exemption_amount) * 0.25 - 1005.00)</field>
+    </record>
+    <record id="hr_payroll_rules_pit5" model="hr.salary.rule">
+        <field name="category_id" ref="PIT"/>
+        <field name="parent_rule_id" ref="rules_pit"/>
+        <field name="name">个人所得税</field>
+        <field name="code">PIT5</field>
+        <field name="sequence">150</field>
+        <field name="appears_on_payslip" eval="True"/>
+        <field name="condition_select">range</field>
+        <field name="condition_range">BT - contract.pit_exemption_amount</field>
+        <field name="condition_range_min">35000.00</field>
+        <field name="condition_range_max">55000.00</field>
+        <field name="amount_select">code</field>
+        <field name="amount_python_compute">result = -((BT - contract.pit_exemption_amount) * 0.30 - 2755.00)</field>
+    </record>
+    <record id="hr_payroll_rules_pit6" model="hr.salary.rule">
+        <field name="category_id" ref="PIT"/>
+        <field name="parent_rule_id" ref="rules_pit"/>
+        <field name="name">个人所得税</field>
+        <field name="code">PIT6</field>
+        <field name="sequence">160</field>
+        <field name="appears_on_payslip" eval="True"/>
+        <field name="condition_select">range</field>
+        <field name="condition_range">BT - contract.pit_exemption_amount</field>
+        <field name="condition_range_min">55000.00</field>
+        <field name="condition_range_max">80000.00</field>
+        <field name="amount_select">code</field>
+        <field name="amount_python_compute">result = -((BT - contract.pit_exemption_amount) * 0.35 - 5505.00)</field>
+    </record>
+    <record id="hr_payroll_rules_pit7" model="hr.salary.rule">
+        <field name="category_id" ref="PIT"/>
+        <field name="parent_rule_id" ref="rules_pit"/>
+        <field name="name">个人所得税</field>
+        <field name="code">PIT7</field>
+        <field name="sequence">170</field>
+        <field name="appears_on_payslip" eval="True"/>
+        <field name="condition_select">python</field>
+        <field name="condition_python">result = (BT - contract.pit_exemption_amount) &gt; 80000.00</field>
+        <field name="amount_select">code</field>
+        <field name="amount_python_compute">result = -((BT - contract.pit_exemption_amount) * 0.35 - 13505.00)</field>
+    </record>
+
+    <!-- 单位缴纳社保母规则-->
+    <record id="rules_dysb" model="hr.salary.rule">
+        <field name="category_id" ref="COMP"/>
+        <field name="name">单位缴纳社保</field>
+        <field name="code">DYSB</field>
+        <field name="amount_select">fix</field>
+        <field name="sequence">60</field>
+        <field name="condition_select">none</field>
+        <field name="appears_on_payslip" eval="False"/>
+    </record>
+    <record id="hr_payroll_rules_dyyb" model="hr.salary.rule">
+        <field name="category_id" ref="COMP"/>
+        <field name="parent_rule_id" ref="rules_dysb"/>
+        <field name="name">单位医保</field>
+        <field name="code">DYYB</field>
+        <field name="appears_on_payslip" eval="True"/>
+        <field name="sequence">61</field>
+        <field name="condition_select">none</field>
+        <field name="amount_select">code</field>
+        <field name="amount_python_compute">result = contract.social_insurance_amount * 0.09</field>
+    </record>
+    <record id="hr_payroll_rules_dysybx" model="hr.salary.rule">
+        <field name="category_id" ref="COMP"/>
+        <field name="parent_rule_id" ref="rules_dysb"/>
+        <field name="name">单位失业保险</field>
+        <field name="code">DYSYBX</field>
+        <field name="appears_on_payslip" eval="True"/>
+        <field name="sequence">62</field>
+        <field name="condition_select">none</field>
+        <field name="amount_select">code</field>
+        <field name="amount_python_compute">result = contract.social_insurance_amount * 0.02</field>
+    </record>
+    <record id="hr_payroll_rules_dyylbx" model="hr.salary.rule">
+        <field name="category_id" ref="COMP"/>
+        <field name="parent_rule_id" ref="rules_dysb"/>
+        <field name="name">单位养老保险</field>
+        <field name="code">DYYLBX</field>
+        <field name="appears_on_payslip" eval="True"/>
+        <field name="sequence">63</field>
+        <field name="condition_select">none</field>
+        <field name="amount_select">code</field>
+        <field name="amount_python_compute">result = contract.social_insurance_amount * 0.21</field>
+    </record>
+    <record id="hr_payroll_rules_dygsbx" model="hr.salary.rule">
+        <field name="category_id" ref="COMP"/>
+        <field name="parent_rule_id" ref="rules_dysb"/>
+        <field name="name">单位工伤保险</field>
+        <field name="code">DYGSBX</field>
+        <field name="appears_on_payslip" eval="True"/>
+        <field name="sequence">64</field>
+        <field name="condition_select">none</field>
+        <field name="amount_select">code</field>
+        <field name="amount_python_compute">result = contract.social_insurance_amount * 0.005</field>
+    </record>
+    <record id="hr_payroll_rules_dysybx" model="hr.salary.rule">
+        <field name="category_id" ref="COMP"/>
+        <field name="parent_rule_id" ref="rules_dysb"/>
+        <field name="name">单位生育保险</field>
+        <field name="code">DYGSBX</field>
+        <field name="appears_on_payslip" eval="True"/>
+        <field name="sequence">65</field>
+        <field name="condition_select">none</field>
+        <field name="amount_select">code</field>
+        <field name="amount_python_compute">result = contract.social_insurance_amount * 0.01</field>
+    </record>
+
+    <!-- 薪酬结构 -->
+
+    <record id="hr_payroll_salary_structure_employee" model="hr.payroll.structure">
+        <field name="code">NEP01</field>
+        <field name="name">中国法定薪酬（含公积金）</field>
+        <field eval="[(6, 0, [ref('rules_grsb'),ref('rules_dysb'),ref('rules_grgjj'),ref('rules_dygjj'),ref('rules_bt'),ref('rules_pit'),])]" name="rule_ids"/>
+        <field name="company_id" ref="base.main_company"/>    
+        <field name="parent_id" ref="hr_payroll.structure_base"/>
+    </record>
+
+    </data>
+</openerp>
