@@ -2,7 +2,7 @@
 ##############################################################################
 #
 #    WychERP Business Application Platform
-#    Copyright (C) 2012 Sandwych Consulting Limited (<http://www.sandwych.com>).
+#    Copyright (C) 2012 Kunming Sandwych Consulting Limited (<http://www.sandwych.com>).
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU Affero General Public License as
@@ -42,7 +42,7 @@ Chinese Payroll Rules
 
     'auto_install': False,
     'demo': [
-     #'l10n_cn_hr_payroll_demo.xml',
+        'l10n_cn_hr_payroll_demo.xml',
     ],
     'data':[
      'l10n_cn_hr_payroll_view.xml',
