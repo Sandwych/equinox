@@ -24,7 +24,7 @@
     'author': 'Kunming Sandwych Consulting Limited',
     'depends': ['hr_payroll'],
     'version': '1.0',
-    'version': 'www.sandwych.com',
+    'website': 'www.sandwych.com',
     'description': """
 Chinese Payroll Rules
 =====================
