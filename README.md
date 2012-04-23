@@ -11,3 +11,6 @@ Equinox 也是我们的 WychERP 产品的一个基本组成部分。
 如果您有任何的意见与建议欢迎及时与与我们联系：contact@sandwych.com
 
 需要购买专业技术支持支持或其他服务请联系：sales@sandwych.com
+
+
+版权所有 (C) 2012 昆明维智众源信息化咨询有限公司
