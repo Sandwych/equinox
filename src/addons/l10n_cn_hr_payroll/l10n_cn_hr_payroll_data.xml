@@ -35,7 +35,7 @@
     <!-- 个人社保母规则-->
     <record id="rules_grsb" model="hr.salary.rule">
         <field name="category_id" ref="hr_payroll.DED"/>
-        <field name="name">个人缴纳社保</field>
+        <field name="name">代扣个人社保</field>
         <field name="code">GRSB</field>
         <field name="amount_select">fix</field>
         <field name="sequence">50</field>
@@ -45,7 +45,7 @@
     <record id="hr_payroll_rules_gryb" model="hr.salary.rule">
         <field name="category_id" ref="hr_payroll.DED"/>
         <field name="parent_rule_id" ref="rules_grsb"/>
-        <field name="name">个人缴纳医保</field>
+        <field name="name">代扣个人医保</field>
         <field name="code">GRYB</field>
         <field name="appears_on_payslip" eval="True"/>
         <field name="sequence">51</field>
@@ -56,7 +56,7 @@
     <record id="hr_payroll_rules_grsybx" model="hr.salary.rule">
         <field name="category_id" ref="hr_payroll.DED"/>
         <field name="parent_rule_id" ref="rules_grsb"/>
-        <field name="name">个人缴纳失业保险</field>
+        <field name="name">代扣个人失业保险</field>
         <field name="code">GRSYBX</field>
         <field name="appears_on_payslip" eval="True"/>
         <field name="sequence">52</field>
@@ -67,7 +67,7 @@
     <record id="hr_payroll_rules_grylbx" model="hr.salary.rule">
         <field name="category_id" ref="hr_payroll.DED"/>
         <field name="parent_rule_id" ref="rules_grsb"/>
-        <field name="name">个人缴纳养老保险</field>
+        <field name="name">代扣个人养老保险</field>
         <field name="code">GRYLBX</field>
         <field name="appears_on_payslip" eval="True"/>
         <field name="sequence">53</field>
@@ -78,7 +78,7 @@
 
     <record id="rules_grgjj" model="hr.salary.rule">
         <field name="category_id" ref="hr_payroll.DED"/>
-        <field name="name">个人缴纳公积金</field>
+        <field name="name">代扣个人公积金</field>
         <field name="code">GRGJJ</field>
         <field name="appears_on_payslip" eval="True"/>
         <field name="sequence">80</field>
