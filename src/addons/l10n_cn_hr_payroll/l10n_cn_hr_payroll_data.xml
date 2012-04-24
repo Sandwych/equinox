@@ -10,7 +10,7 @@
     </record>
 
     <record id="COMP" model="hr.salary.rule.category">
-        <field name="name">公司缴纳部分</field>
+        <field name="name">单位缴纳部分</field>
         <field name="code">COMP</field>
     </record>
 
@@ -35,8 +35,8 @@
     <!-- 个人社保母规则-->
     <record id="rules_grsb" model="hr.salary.rule">
         <field name="category_id" ref="hr_payroll.DED"/>
-        <field name="name">社保</field>
-        <field name="code">SB</field>
+        <field name="name">个人缴纳社保</field>
+        <field name="code">GRSB</field>
         <field name="amount_select">fix</field>
         <field name="sequence">50</field>
         <field name="condition_select">none</field>
@@ -45,7 +45,7 @@
     <record id="hr_payroll_rules_gryb" model="hr.salary.rule">
         <field name="category_id" ref="hr_payroll.DED"/>
         <field name="parent_rule_id" ref="rules_grsb"/>
-        <field name="name">个人医保</field>
+        <field name="name">个人缴纳医保</field>
         <field name="code">GRYB</field>
         <field name="appears_on_payslip" eval="True"/>
         <field name="sequence">51</field>
@@ -56,7 +56,7 @@
     <record id="hr_payroll_rules_grsybx" model="hr.salary.rule">
         <field name="category_id" ref="hr_payroll.DED"/>
         <field name="parent_rule_id" ref="rules_grsb"/>
-        <field name="name">个人失业保险</field>
+        <field name="name">个人缴纳失业保险</field>
         <field name="code">GRSYBX</field>
         <field name="appears_on_payslip" eval="True"/>
         <field name="sequence">52</field>
@@ -67,7 +67,7 @@
     <record id="hr_payroll_rules_grylbx" model="hr.salary.rule">
         <field name="category_id" ref="hr_payroll.DED"/>
         <field name="parent_rule_id" ref="rules_grsb"/>
-        <field name="name">个人养老保险</field>
+        <field name="name">个人缴纳养老保险</field>
         <field name="code">GRYLBX</field>
         <field name="appears_on_payslip" eval="True"/>
         <field name="sequence">53</field>
@@ -78,7 +78,7 @@
 
     <record id="rules_grgjj" model="hr.salary.rule">
         <field name="category_id" ref="hr_payroll.DED"/>
-        <field name="name">个人公积金</field>
+        <field name="name">个人缴纳公积金</field>
         <field name="code">GRGJJ</field>
         <field name="appears_on_payslip" eval="True"/>
         <field name="sequence">80</field>
@@ -89,7 +89,7 @@
 
     <record id="rules_dygjj" model="hr.salary.rule">
         <field name="category_id" ref="COMP" />
-        <field name="name">单位公积金</field>
+        <field name="name">单位缴纳公积金</field>
         <field name="code">DYGJJ</field>
         <field name="appears_on_payslip" eval="True"/>
         <field name="sequence">69</field>
@@ -219,7 +219,7 @@
     <record id="hr_payroll_rules_dyyb" model="hr.salary.rule">
         <field name="category_id" ref="COMP"/>
         <field name="parent_rule_id" ref="rules_dysb"/>
-        <field name="name">单位医保</field>
+        <field name="name">单位缴纳医保</field>
         <field name="code">DYYB</field>
         <field name="appears_on_payslip" eval="True"/>
         <field name="sequence">61</field>
@@ -230,7 +230,7 @@
     <record id="hr_payroll_rules_dysybx" model="hr.salary.rule">
         <field name="category_id" ref="COMP"/>
         <field name="parent_rule_id" ref="rules_dysb"/>
-        <field name="name">单位失业保险</field>
+        <field name="name">单位缴纳失业保险</field>
         <field name="code">DYSYBX</field>
         <field name="appears_on_payslip" eval="True"/>
         <field name="sequence">62</field>
@@ -241,7 +241,7 @@
     <record id="hr_payroll_rules_dyylbx" model="hr.salary.rule">
         <field name="category_id" ref="COMP"/>
         <field name="parent_rule_id" ref="rules_dysb"/>
-        <field name="name">单位养老保险</field>
+        <field name="name">单位缴纳养老保险</field>
         <field name="code">DYYLBX</field>
         <field name="appears_on_payslip" eval="True"/>
         <field name="sequence">63</field>
@@ -252,7 +252,7 @@
     <record id="hr_payroll_rules_dygsbx" model="hr.salary.rule">
         <field name="category_id" ref="COMP"/>
         <field name="parent_rule_id" ref="rules_dysb"/>
-        <field name="name">单位工伤保险</field>
+        <field name="name">单位缴纳工伤保险</field>
         <field name="code">DYGSBX</field>
         <field name="appears_on_payslip" eval="True"/>
         <field name="sequence">64</field>
@@ -263,7 +263,7 @@
     <record id="hr_payroll_rules_dysybx" model="hr.salary.rule">
         <field name="category_id" ref="COMP"/>
         <field name="parent_rule_id" ref="rules_dysb"/>
-        <field name="name">单位生育保险</field>
+        <field name="name">单位缴纳生育保险</field>
         <field name="code">DYGSBX</field>
         <field name="appears_on_payslip" eval="True"/>
         <field name="sequence">65</field>
