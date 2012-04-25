@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+<data noupdate="1">
+
+    <record id="account_move_report_id" model="ir.actions.report.xml">
+        <field name="name">打印记账凭证</field>
+        <field name="type">ir.actions.report.xml</field>
+        <field name="model">account.move</field>
+        <field name="report_name">l10n_cn_account_move_report</field>
+        <field name="report_type">aeroo</field>
+        <field name="in_format">oo-ods</field>
+        <field name="parser_loc">l10n_cn_account_report/report/account_move_parser.py</field>
+        <field name="report_rml">l10n_cn_account_report/report/account_move_template.ods</field>
+        <field name="parser_state">loc</field>
+        <field name="tml_source">file</field>
+    </record>
+
+    <ir_set>
+        <field eval="'action'" name="key"/>
+        <field eval="'client_print_multi'" name="key2"/>
+        <field eval="['account.move']" name="models"/>
+        <field name="name">打印记账凭证</field>
+        <field eval="'ir.actions.report.xml,'+str(account_move_report_id)" name="value"/>
+        <field eval="True" name="isobject"/>
+        <field eval="True" name="replace"/>
+    </ir_set>
+
+</data>
+</openerp>
+
