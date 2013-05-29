@@ -154,7 +154,8 @@ def encode_message(msg):
     return message
 
 
-import Image, os
+import os
+from PIL import Image
 def get_code(message,xw=1,h=100,rotate=None):
     """ message is message to code.
         xw is horizontal multiplier (in pixels width of narrowest bar)

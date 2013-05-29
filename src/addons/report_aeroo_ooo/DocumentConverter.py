@@ -36,7 +36,15 @@ from os.path import abspath
 from os.path import isfile
 from os.path import splitext
 import sys
-from StringIO import StringIO
+import time
+import subprocess
+import logging
+try:
+    from cStringIO import StringIO
+except ImportError:
+    from StringIO import StringIO
+
+_logger = logging.getLogger(__name__)
 
 if sys.platform=='win32':
     import _winreg
@@ -101,9 +109,10 @@ class OutputStreamWrapper(unohelper.Base, XOutputStream):
 
 class DocumentConverter:
    
-    def __init__(self, host='localhost', port=DEFAULT_OPENOFFICE_PORT):
+    def __init__(self, host='localhost', port=DEFAULT_OPENOFFICE_PORT, ooo_restart_cmd=None):
         self._host = host
         self._port = port
+        self._ooo_restart_cmd = ooo_restart_cmd
         self.localContext = uno.getComponentContext()
         self.serviceManager = self.localContext.ServiceManager
         self._resolver = self.serviceManager.createInstanceWithContext("com.sun.star.bridge.UnoUrlResolver", self.localContext)
@@ -112,7 +121,15 @@ class DocumentConverter:
         except IllegalArgumentException, exception:
             raise DocumentConversionException("The url is invalid (%s)" % exception)
         except NoConnectException, exception:
-            raise DocumentConversionException("Failed to connect to OpenOffice.org on host %s, port %s. %s" % (host, port, exception))
+            if self._restart_ooo():
+                # We try again once
+                try:
+                    self._context = self._resolver.resolve("uno:socket,host=%s,port=%s;urp;StarOffice.ComponentContext" % (host, port))
+                except NoConnectException, exception:
+                    raise DocumentConversionException("Failed to connect to OpenOffice.org on host %s, port %s. %s" % (host, port, exception))
+            else:
+                raise DocumentConversionException("Failed to connect to OpenOffice.org on host %s, port %s. %s" % (host, port, exception))
+
         except ConnectionSetupException, exception:
             raise DocumentConversionException("Not possible to accept on a local resource (%s)" % exception)
 
@@ -206,4 +223,21 @@ class DocumentConverter:
             prop.Value = args[key]
             props.append(prop)
         return tuple(props)
+
+    def _restart_ooo(self):
+        if not self._ooo_restart_cmd:
+            _logger.warning('No LibreOffice/OpenOffice restart script configured')
+            return False
+        _logger.info('Restarting LibreOffice/OpenOffice background process')
+        try:
+            _logger.info('Executing restart script "%s"' % self._ooo_restart_cmd)
+            retcode = subprocess.call(self._ooo_restart_cmd, shell=True)
+            if retcode == 0:
+                _logger.warning('Restart successfull')
+                time.sleep(4) # Let some time for LibO/OOO to be fully started
+            else:
+                _logger.error('Restart script failed with return code %d' % retcode)
+        except OSError, e:
+            _logger.error('Failed to execute the restart script. OS error: %s' % e)
+        return True
 

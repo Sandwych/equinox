@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+		<record model="ir.ui.view" id="report_aeroo_poweremail_template_form">
+			<field name="name">poweremail.templates.form.inherit1</field>
+			<field name="model">poweremail.templates</field>
+			<field name="type">form</field>
+		    <field name="inherit_id" ref="poweremail.poweremail_template_form"/>
+			<field name="arch" type="xml">
+                <data>
+                    <field name="template_language" position="after">
+                        <field name="aeroo_report_id" domain="[('report_type','=','aeroo'),('out_format.code','=','genshi-raw')]" attrs="{'invisible':[('template_language','&lt;&gt;','aeroo')],'required':[('template_language','=','aeroo')]}" colspan="4"/>
+                    </field>
+                    <xpath expr="//notebook/page[@string='Mail Details']/group[3]/notebook/page[@string='Insert Simple Field']" position="attributes">
+                        <attribute name="attrs">{'invisible':[('template_language','=','aeroo')]}</attribute>
+                    </xpath>
+                    <xpath expr="//notebook/page[@string='Mail Details']/group[3]/notebook/page[@string='Insert Table']" position="attributes">
+                        <attribute name="attrs">{'invisible':[('template_language','=','aeroo')]}</attribute>
+                    </xpath>
+                    <field name="def_body_text" position="attributes">
+                        <attribute name="attrs">{'readonly':[('template_language','=','aeroo')]}</attribute>
+                    </field>
+                </data>
+			</field>
+		</record>
+
+    </data>
+</openerp>
