@@ -1,6 +1,6 @@
 ##############################################################################
 #
-# Copyright (c) 2009-2011 Alistek Ltd (http://www.alistek.com) All Rights Reserved.
+# Copyright (c) 2008-2011 Alistek Ltd (http://www.alistek.com) All Rights Reserved.
 #                    General contacts <info@alistek.com>
 #
 # WARNING: This program as such is intended to be used by professional
@@ -36,9 +36,9 @@ from DocumentConverter import DocumentConverter
 class OpenOffice_service (DocumentConverter, netsvc.Service):
 
     def __init__(self, cr, host, port):
-        cr.execute("SELECT host, port FROM oo_config")
-        host, port = cr.fetchone()
-        DocumentConverter.__init__(self, host, port)
+        cr.execute("SELECT host, port, ooo_restart_cmd FROM oo_config")
+        host, port, ooo_restart_cmd = cr.fetchone()
+        DocumentConverter.__init__(self, host, port, ooo_restart_cmd)
         netsvc.Service.__init__(self, 'openoffice')
 
 
@@ -52,6 +52,10 @@ class oo_config(osv.osv):
     _columns = {
         'host':fields.char('Host', size=128, required=True),
         'port': fields.integer('Port', required=True),
+        'ooo_restart_cmd': fields.char('OOO restart command', size=256, \
+            help='Enter the shell command that will be executed to restart the LibreOffice/OpenOffice background process. '+ \
+                'The command will be executed as the user of the OpenERP server process,'+ \
+                'so you may need to prefix it with sudo and configure your sudoers file to have this command executed without password.'),
         
     }
 
@@ -62,7 +66,7 @@ class report_xml(osv.osv):
     _inherit = 'ir.actions.report.xml'
 
     _columns = {
-        'process_sep':fields.boolean('Process separately'),
+        'process_sep':fields.boolean('Process Separately'),
         
     }
 

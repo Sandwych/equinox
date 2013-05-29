@@ -13,9 +13,9 @@
 # This creates a PNG image "barcode.png" containing a barcode of the height of 100px
 # a min line width of 2px with "Hello World" encoded as "*HELLO WORLD*" in Code 39
 
-import Image, ImageDraw, ImageFont, sys
+from PIL import Image, ImageDraw, ImageFont
 from tools import config, ustr
-import os
+import os, sys
 
 marginx = 10
 marginy = 10

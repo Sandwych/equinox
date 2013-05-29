@@ -1,7 +1,8 @@
 # Copyright (c) 2009-2011 Alistek Ltd (http://www.alistek.com) All Rights Reserved.
 #                    General contacts <info@alistek.com>
 
-from tools import config
+from tools import config, ustr
+fontsize = 15
 
 """
 This class generate EAN bar code, it required PIL (python imaging library)
@@ -101,7 +102,8 @@ class EanBarCode:
       value code barre value
       height height in pixel of the bar code
       extension image file extension"""
-      import Image, ImageFont, ImageDraw, os
+      from PIL import Image, ImageFont, ImageDraw
+      import os
       from string import lower, upper
       
       # Get the bar code list

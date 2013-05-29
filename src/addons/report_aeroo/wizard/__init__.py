@@ -33,3 +33,4 @@ import add_print_button
 import remove_print_button
 import report_print_actions
 import report_print_by_action
+import report_import_wizard

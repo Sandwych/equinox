@@ -1,6 +1,6 @@
 ##############################################################################
 #
-# Copyright (c) 2009-2011 Alistek Ltd (http://www.alistek.com) All Rights Reserved.
+# Copyright (c) 2009-2012 Alistek Ltd (http://www.alistek.com) All Rights Reserved.
 #                    General contacts <info@alistek.com>
 #
 # WARNING: This program as such is intended to be used by professional
@@ -42,6 +42,7 @@ check_list = [
 from check_deps import check_deps
 check_deps(check_list)
 
+import installer
 import translate
 import report_xml
 import report_aeroo

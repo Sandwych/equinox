@@ -41,7 +41,7 @@ def extend_trans_generate(lang, modules, cr):
     trans_obj = pool.get('ir.translation')
     model_data_obj = pool.get('ir.model.data')
     uid = 1
-    l = pool.obj_pool.items()
+    l = pool.obj_list()
     l.sort()
 
     query = 'SELECT name, model, res_id, module'    \
