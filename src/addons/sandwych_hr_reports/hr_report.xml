@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp><data>
+
+    <record id="hr_expense_report" model="ir.actions.report.xml">
+        <field name="name">报销单</field>
+        <field name="type">ir.actions.report.xml</field>
+        <field name="model">hr.expense.expense</field>
+        <field name="report_name">hr_expense_report</field>
+        <field name="report_type">aeroo</field>
+        <field name="in_format">oo-odt</field>
+        <field name="parser_loc">sandwych_hr_reports/report/hr_expense_parser.py</field>
+        <field name="report_rml">sandwych_hr_reports/report/hr_expense_template.odt</field>
+        <field name="parser_state">loc</field>
+        <field name="tml_source">file</field>
+    </record>
+
+    <ir_set>
+        <field eval="'action'" name="key"/>
+        <field eval="'client_print_multi'" name="key2"/>
+        <field eval="['hr.expense.expense']" name="models"/>
+        <field name="name">报销单</field>
+        <field eval="'ir.actions.report.xml,'+str(hr_expense_report)" name="value"/>
+        <field eval="True" name="isobject"/>
+        <field eval="True" name="replace"/>
+    </ir_set>
+
+</data></openerp>
