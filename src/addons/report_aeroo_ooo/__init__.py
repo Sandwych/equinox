@@ -1,6 +1,6 @@
 ##############################################################################
 #
-# Copyright (c) 2009-2012 Alistek Ltd (http://www.alistek.com) All Rights Reserved.
+# Copyright (c) 2008-2013 Alistek Ltd (http://www.alistek.com) All Rights Reserved.
 #                    General contacts <info@alistek.com>
 #
 # WARNING: This program as such is intended to be used by professional
@@ -40,6 +40,31 @@ check_list = [
     'from com.sun.star.io import XOutputStream',
     'from com.sun.star.io import IOException',
 ]
+
+DEFAULT_OPENOFFICE_PATH = [
+    "C:\Program Files\OpenOffice.org 3\Basis\program",
+    "C:\Program Files\OpenOffice.org 3\program",
+    "C:\Program Files\OpenOffice.org 3\URE\bin"]
+
+DEFAULT_OPENOFFICE_PATH_AMD64 = [
+    "C:\Program Files (x86)\OpenOffice.org 3\Basis\program",
+    "C:\Program Files (x86)\OpenOffice.org 3\program",
+    "C:\Program Files (x86)\OpenOffice.org 3\URE\bin"]
+
+import sys
+
+if sys.platform=='win32':
+    import _winreg
+    import platform
+    try:
+        key = _winreg.OpenKey(_winreg.HKEY_LOCAL_MACHINE, 'SYSTEM\CurrentControlSet\Control\Session Manager\Environment')
+        python_path = _winreg.QueryValueEx(key, "PYTHONPATH")[0].split(';')
+        if python_path:
+            sys.path.extend(python_path)
+        else:
+            sys.path.extend(platform.machine()=='x86' and DEFAULT_OPENOFFICE_PATH or DEFAULT_OPENOFFICE_PATH_AMD64)
+    except WindowsError, e:
+        sys.path.extend(platform.machine()=='x86' and DEFAULT_OPENOFFICE_PATH or DEFAULT_OPENOFFICE_PATH_AMD64)
 
 from check_deps import check_deps
 check_deps(check_list)

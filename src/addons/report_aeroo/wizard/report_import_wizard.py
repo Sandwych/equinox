@@ -149,5 +149,3 @@ class report_aeroo_import(osv.osv_memory):
         'state': 'draft',
     }
 
-report_aeroo_import()
-

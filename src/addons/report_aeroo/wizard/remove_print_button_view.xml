@@ -6,22 +6,23 @@
             <field name="model">aeroo.remove_print_button</field>
             <field name="type">form</field>
             <field name="arch" type="xml">
-                <form string="Remove Print Button">
+                <form string="Remove Print Button" version="7.0">
                     <group attrs="{'invisible':[('state','&lt;&gt;','remove')]}">
                         <label string="Or you want to remove print button for this report?"/>
                     </group>
                     <group attrs="{'invisible':[('state','&lt;&gt;','no_exist')]}">
-                        <label string="No Report Action to delete for this report"/>
+                        <label string="No Report Action to delete for this report."/>
                     </group>
                     <group attrs="{'invisible':[('state','&lt;&gt;','done')]}">
-                        <label string="The print button is successfully removed"/>
+                        <label string="The print button is successfully removed."/>
                     </group>
-                    <separator colspan="4"/>
-                    <group colspan="4">
-                        <button name="do_action" string="_Ok" states="remove" type="object"/>
-                        <button special="cancel" string="_No" states="remove"/>
-                        <button special="cancel" string="_Cancel" states="no_exist,done"/>
-                    </group>
+                    <footer>
+                        <group>
+                            <button name="do_action" string="_Ok" states="remove" type="object"/>
+                            <button special="cancel" string="_No" states="remove"/>
+                            <button special="cancel" string="_Cancel" states="no_exist,done"/>
+                        </group>
+                    </footer>
                     <field name="state" invisible="1"/>
                 </form>
             </field>

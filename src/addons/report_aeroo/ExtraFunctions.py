@@ -168,9 +168,9 @@ class ExtraFunctions(object):
     def _perm_read(self, cr, uid):
         def get_log(obj, field=None):
             if field:
-                return obj.perm_read(self.uid, [obj.id])[0][field]
+                return obj.perm_read()[0][field]
             else:
-                return obj.perm_read(self.uid, [obj.id])[0]
+                return obj.perm_read()[0]
         return get_log
 
     def _get_report_xml(self):

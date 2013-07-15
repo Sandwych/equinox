@@ -20,28 +20,31 @@
 #
 ##############################################################################
 
-import netsvc
 import os
 import logging
 import pooler
-import re
 import tools
 from tools.translate import trans_parse_rml, trans_parse_xsl, trans_parse_view
-import itertools
 import fnmatch
 from os.path import join
 from lxml import etree
+from tools import misc
 from tools.misc import UpdateableStr
+from tools import osutil
+from babel.messages import extract
+
+_logger = logging.getLogger(__name__)
+
+WEB_TRANSLATION_COMMENT = "openerp-web"
 
 def extend_trans_generate(lang, modules, cr):
-    logger = logging.getLogger('i18n')
     dbname = cr.dbname
 
     pool = pooler.get_pool(dbname)
     trans_obj = pool.get('ir.translation')
     model_data_obj = pool.get('ir.model.data')
     uid = 1
-    l = pool.obj_list()
+    l = pool.models.items()
     l.sort()
 
     query = 'SELECT name, model, res_id, module'    \
@@ -65,9 +68,14 @@ def extend_trans_generate(lang, modules, cr):
     cr.execute(query, query_param)
 
     _to_translate = []
-    def push_translation(module, type, name, id, source):
-        tuple = (module, source, name, id, type)
-        if source and tuple not in _to_translate:
+    def push_translation(module, type, name, id, source, comments=None):
+        tuple = (module, source, name, id, type, comments or [])
+        # empty and one-letter terms are ignored, they probably are not meant to be
+        # translated, and would be very hard to translate anyway.
+        if not source or len(source.strip()) <= 1:
+            _logger.debug("Ignoring empty or 1-letter source term: %r", tuple)
+            return
+        if tuple not in _to_translate:
             _to_translate.append(tuple)
 
     def encode(s):
@@ -81,12 +89,12 @@ def extend_trans_generate(lang, modules, cr):
         xml_name = "%s.%s" % (module, encode(xml_name))
 
         if not pool.get(model):
-            logger.error("Unable to find object %r", model)
+            _logger.error("Unable to find object %r", model)
             continue
 
         exists = pool.get(model).exists(cr, uid, res_id)
         if not exists:
-            logger.warning("Unable to find object %r with id %d", model, res_id)
+            _logger.warning("Unable to find object %r with id %d", model, res_id)
             continue
         obj = pool.get(model).browse(cr, uid, res_id)
 
@@ -96,6 +104,7 @@ def extend_trans_generate(lang, modules, cr):
                 push_translation(module, 'view', encode(obj.model), 0, t)
         elif model=='ir.actions.wizard':
             service_name = 'wizard.'+encode(obj.wiz_name)
+            import openerp.netsvc as netsvc
             if netsvc.Service._services.get(service_name):
                 obj2 = netsvc.Service._services[service_name]
                 for state_name, state_def in obj2.states.iteritems():
@@ -113,7 +122,7 @@ def extend_trans_generate(lang, modules, cr):
 
                         # export fields
                         if not result.has_key('fields'):
-                            logger.warning("res has no fields: %r", result)
+                            _logger.warning("res has no fields: %r", result)
                             continue
                         for field_name, field_def in result['fields'].iteritems():
                             res_name = name + ',' + field_name
@@ -142,7 +151,7 @@ def extend_trans_generate(lang, modules, cr):
             try:
                 field_name = encode(obj.name)
             except AttributeError, exc:
-                logger.error("name error in %s: %s", xml_name, str(exc))
+                _logger.error("name error in %s: %s", xml_name, str(exc))
                 continue
             objmodel = pool.get(obj.model)
             if not objmodel or not field_name in objmodel._columns:
@@ -193,7 +202,7 @@ def extend_trans_generate(lang, modules, cr):
                     report_type = "xsl"
                 if fname and obj.report_type in ('pdf', 'xsl'):
                     try:
-                        report_file = tools.file_open(fname)
+                        report_file = misc.file_open(fname)
                         try:
                             d = etree.parse(report_file)
                             for t in parse_func(d.iter()):
@@ -201,7 +210,7 @@ def extend_trans_generate(lang, modules, cr):
                         finally:
                             report_file.close()
                     except (IOError, etree.XMLSyntaxError):
-                        logger.exception("couldn't export translation for report %s %s %s", name, report_type, fname)
+                        _logger.exception("couldn't export translation for report %s %s %s", name, report_type, fname)
 
         for field_name,field_def in obj._table._columns.items():
             if field_def.translate:
@@ -217,28 +226,34 @@ def extend_trans_generate(lang, modules, cr):
     cr.execute(query_models, query_param)
 
     def push_constraint_msg(module, term_type, model, msg):
-        # Check presence of __call__ directly instead of using
-        # callable() because it will be deprecated as of Python 3.0
         if not hasattr(msg, '__call__'):
-            push_translation(module, term_type, model, 0, encode(msg))
+            push_translation(encode(module), term_type, encode(model), 0, encode(msg))
 
-    for (model_id, model, module) in cr.fetchall():
-        module = encode(module)
-        model = encode(model)
-
+    def push_local_constraints(module, model, cons_type='sql_constraints'):
+        """Climb up the class hierarchy and ignore inherited constraints
+           from other modules"""
+        term_type = 'sql_constraint' if cons_type == 'sql_constraints' else 'constraint'
+        msg_pos = 2 if cons_type == 'sql_constraints' else 1
+        for cls in model.__class__.__mro__:
+            if getattr(cls, '_module', None) != module:
+                continue
+            constraints = getattr(cls, '_local_' + cons_type, [])
+            for constraint in constraints:
+                push_constraint_msg(module, term_type, model._name, constraint[msg_pos])
+            
+    for (_, model, module) in cr.fetchall():
         model_obj = pool.get(model)
 
         if not model_obj:
-            logging.getLogger("i18n").error("Unable to find object %r", model)
+            _logger.error("Unable to find object %r", model)
             continue
 
-        for constraint in getattr(model_obj, '_constraints', []):
-            push_constraint_msg(module, 'constraint', model, constraint[1])
+        if model_obj._constraints:
+            push_local_constraints(module, model_obj, 'constraints')
 
-        for constraint in getattr(model_obj, '_sql_constraints', []):
-            push_constraint_msg(module, 'sql_constraint', model, constraint[2])
+        if model_obj._sql_constraints:
+            push_local_constraints(module, model_obj, 'sql_constraints')
 
-    # parse source code for _() calls
     def get_module_from_path(path, mod_paths=None):
         if not mod_paths:
             # First, construct a list of possible paths
@@ -273,79 +288,61 @@ def extend_trans_generate(lang, modules, cr):
     for bin_path in ['osv', 'report' ]:
         path_list.append(os.path.join(tools.config['root_path'], bin_path))
 
-    logger.debug("Scanning modules at paths: ", path_list)
+    _logger.debug("Scanning modules at paths: ", path_list)
 
     mod_paths = []
-    join_dquotes = re.compile(r'([^\\])"[\s\\]*"', re.DOTALL)
-    join_quotes = re.compile(r'([^\\])\'[\s\\]*\'', re.DOTALL)
-    re_dquotes = re.compile(r'[^a-zA-Z0-9_]_\([\s]*"(.+?)"[\s]*?\)', re.DOTALL)
-    re_quotes = re.compile(r'[^a-zA-Z0-9_]_\([\s]*\'(.+?)\'[\s]*?\)', re.DOTALL)
 
-    def export_code_terms_from_file(fname, path, root, terms_type):
+    def verified_module_filepaths(fname, path, root):
         fabsolutepath = join(root, fname)
         frelativepath = fabsolutepath[len(path):]
+        display_path = "addons%s" % frelativepath
         module = get_module_from_path(fabsolutepath, mod_paths=mod_paths)
-        is_mod_installed = module in installed_modules
-        if (('all' in modules) or (module in modules)) and is_mod_installed:
-            logger.debug("Scanning code of %s at module: %s", frelativepath, module)
-            src_file = tools.file_open(fabsolutepath, subdir='')
+        if ('all' in modules or module in modules) and module in installed_modules:
+            return module, fabsolutepath, frelativepath, display_path
+        return None, None, None, None
+
+    def babel_extract_terms(fname, path, root, extract_method="python", trans_type='code',
+                               extra_comments=None, extract_keywords={'_': None}):
+        module, fabsolutepath, _, display_path = verified_module_filepaths(fname, path, root)
+        extra_comments = extra_comments or []
+        if module:
+            src_file = open(fabsolutepath, 'r')
             try:
-                code_string = src_file.read()
+                for lineno, message, comments in extract.extract(extract_method, src_file,
+                                                                 keywords=extract_keywords):
+                    push_translation(module, trans_type, display_path, lineno,
+                                     encode(message), comments + extra_comments)
+            except Exception:
+                _logger.exception("Failed to extract terms from %s", fabsolutepath)
             finally:
                 src_file.close()
-            if module in installed_modules:
-                frelativepath = str("addons" + frelativepath)
-            ite = re_dquotes.finditer(code_string)
-            code_offset = 0
-            code_line = 1
-            for i in ite:
-                src = i.group(1)
-                if src.startswith('""'):
-                    assert src.endswith('""'), "Incorrect usage of _(..) function (should contain only literal strings!) in file %s near: %s" % (frelativepath, src[:30])
-                    src = src[2:-2]
-                else:
-                    src = join_dquotes.sub(r'\1', src)
-                # try to count the lines from the last pos to our place:
-                code_line += code_string[code_offset:i.start(1)].count('\n')
-                # now, since we did a binary read of a python source file, we
-                # have to expand pythonic escapes like the interpreter does.
-                src = src.decode('string_escape')
-                push_translation(module, terms_type, frelativepath, code_line, encode(src))
-                code_line += i.group(1).count('\n')
-                code_offset = i.end() # we have counted newlines up to the match end
-
-            ite = re_quotes.finditer(code_string)
-            code_offset = 0 #reset counters
-            code_line = 1
-            for i in ite:
-                src = i.group(1)
-                if src.startswith("''"):
-                    assert src.endswith("''"), "Incorrect usage of _(..) function (should contain only literal strings!) in file %s near: %s" % (frelativepath, src[:30])
-                    src = src[2:-2]
-                else:
-                    src = join_quotes.sub(r'\1', src)
-                code_line += code_string[code_offset:i.start(1)].count('\n')
-                src = src.decode('string_escape')
-                push_translation(module, terms_type, frelativepath, code_line, encode(src))
-                code_line += i.group(1).count('\n')
-                code_offset = i.end() # we have counted newlines up to the match end
 
     for path in path_list:
-        logger.debug("Scanning files of modules at %s", path)
-        for root, dummy, files in tools.osutil.walksymlinks(path):
-            for fname in itertools.chain(fnmatch.filter(files, '*.py')):
-                export_code_terms_from_file(fname, path, root, 'code')
-            for fname in itertools.chain(fnmatch.filter(files, '*.mako')):
-                export_code_terms_from_file(fname, path, root, 'report')
+        _logger.debug("Scanning files of modules at %s", path)
+        for root, dummy, files in osutil.walksymlinks(path):
+            for fname in fnmatch.filter(files, '*.py'):
+                babel_extract_terms(fname, path, root)
+            # mako provides a babel extractor: http://docs.makotemplates.org/en/latest/usage.html#babel
+            for fname in fnmatch.filter(files, '*.mako'):
+                babel_extract_terms(fname, path, root, 'mako', trans_type='report')
+            # Javascript source files in the static/src/js directory, rest is ignored (libs)
+            if fnmatch.fnmatch(root, '*/static/src/js*'):
+                for fname in fnmatch.filter(files, '*.js'):
+                    babel_extract_terms(fname, path, root, 'javascript',
+                                        extra_comments=[WEB_TRANSLATION_COMMENT],
+                                        extract_keywords={'_t': None, '_lt': None})
+            # QWeb template files
+            if fnmatch.fnmatch(root, '*/static/src/xml*'):
+                for fname in fnmatch.filter(files, '*.xml'):
+                    babel_extract_terms(fname, path, root, 'openerp.tools.translate:babel_extract_qweb',
+                                        extra_comments=[WEB_TRANSLATION_COMMENT])
 
-
-    out = [["module","type","name","res_id","src","value"]] # header
+    out = []
     _to_translate.sort()
     # translate strings marked as to be translated
-    for module, source, name, id, type in _to_translate:
-        trans = trans_obj._get_source(cr, uid, name, type, lang, source)
-        out.append([module, type, name, id, source, encode(trans) or ''])
-
+    for module, source, name, id, type, comments in _to_translate:
+        trans = '' if not lang else trans_obj._get_source(cr, uid, name, type, lang, source)
+        out.append([module, type, name, id, source, encode(trans) or '', comments])
     return out
 
 import sys

@@ -1,6 +1,6 @@
 ##############################################################################
 #
-# Copyright (c) 2008-2012 Alistek Ltd (http://www.alistek.com) All Rights Reserved.
+# Copyright (c) 2008-2011 Alistek Ltd (http://www.alistek.com) All Rights Reserved.
 #                    General contacts <info@alistek.com>
 #
 # WARNING: This program as such is intended to be used by professional
@@ -35,7 +35,6 @@
 	"description" : "Report sample for report_aeroo module",
 	"author" : "Alistek Ltd",
     'website': 'http://www.alistek.com',
-    'complexity': "easy",
 	"depends" : ["base", "report_aeroo"],
 	"category" : "Generic Modules/Aeroo Reporting",
 	"init_xml" : [],

@@ -5,11 +5,10 @@
         <record id="act_aeroo_direct_print_actions_view_form" model="ir.ui.view">
             <field name="name">aeroo.print_actions.form.direct_print</field>
             <field name="model">aeroo.print_actions</field>
-            <field name="type">form</field>
     		<field name="inherit_id" ref="report_aeroo.act_aeroo_print_actions_view_form"/>
             <field name="arch" type="xml">
                 <field name="copies" position="after">
-                    <field name="printer" colspan="4" attrs="{'invisible':[('out_format_code','not in',('genshi-raw','oo-pdf'))]}"/>
+                    <field name="printer" attrs="{'invisible':[('out_format_code','not in',('genshi-raw','oo-pdf'))]}"/>
                 </field>
             </field>
         </record>
@@ -17,7 +16,6 @@
         <record id="act_aeroo_direct_printers_view_form" model="ir.ui.view">
             <field name="name">aeroo.printers.form</field>
             <field name="model">aeroo.printers</field>
-            <field name="type">form</field>
             <field name="arch" type="xml">
                 <form string="Printers for Aeroo direct print">
                     <field name="name" readonly="0"/>
@@ -38,7 +36,6 @@
         <record id="act_aeroo_direct_printers_view_tree" model="ir.ui.view">
             <field name="name">aeroo.printers.tree</field>
             <field name="model">aeroo.printers</field>
-            <field name="type">tree</field>
             <field name="arch" type="xml">
                 <tree string="Printers for Aeroo direct print" editable="bottom">
                     <field name="active"/>
@@ -68,7 +65,6 @@
         <record id="act_aeroo_direct_printers_temp_view_form" model="ir.ui.view">
             <field name="name">aeroo.printers.temp.form</field>
             <field name="model">aeroo.printers.temp</field>
-            <field name="type">form</field>
             <field name="arch" type="xml">
                 <form string="Printers for Aeroo direct print">
                     <field name="name"/>
@@ -82,7 +78,6 @@
         <record id="act_aeroo_direct_printers_temp_view_tree" model="ir.ui.view">
             <field name="name">aeroo.printers.temp.tree</field>
             <field name="model">aeroo.printers.temp</field>
-            <field name="type">tree</field>
             <field name="arch" type="xml">
                 <tree string="Printers for Aeroo direct print" colors="blue:state=='new'">
                     <field name="name"/>
@@ -106,9 +101,11 @@
     		<field name="inherit_id" ref="base.view_users_form"/>
             <field name="arch" type="xml">
                 <data>
-                    <xpath expr="//notebook/page[@string='User']//field[@name='menu_tips']" position="after">
-                        <field name="context_def_purpose_printer" colspan="4" widget="selection" domain="[('code','not in',('user-def-gen-purpose-printer','user-def-label-printer'))]"/>
-                        <field name="context_def_label_printer" colspan="4" widget="selection" domain="[('code','not in',('user-def-gen-purpose-printer','user-def-label-printer'))]"/>
+                    <xpath expr="//sheet/notebook/page[@string='Preferences']/group[1]" position="after">
+                        <group>
+                            <field name="context_def_purpose_printer" widget="selection" domain="[('code','not in',('user-def-gen-purpose-printer','user-def-label-printer'))]"/>
+                            <field name="context_def_label_printer" widget="selection" domain="[('code','not in',('user-def-gen-purpose-printer','user-def-label-printer'))]"/>
+                        </group>
                     </xpath>
                 </data>
             </field>
@@ -121,12 +118,12 @@
     		<field name="inherit_id" ref="base.view_users_form_simple_modif"/>
             <field name="arch" type="xml">
                 <data>
-                    <field name="menu_tips" position="after">
-                        <group colspan="4">
+                    <group name="preferences" position="after">
+                        <group string="Printers Preferences">
                             <field name="context_def_purpose_printer" widget="selection" domain="[('code','not in',('user-def-gen-purpose-printer','user-def-label-printer'))]"/>
                             <field name="context_def_label_printer" widget="selection" domain="[('code','not in',('user-def-gen-purpose-printer','user-def-label-printer'))]"/>
                         </group>
-                    </field>
+                    </group>
                 </data>
             </field>
         </record>
@@ -138,7 +135,7 @@
     		<field name="inherit_id" ref="report_aeroo.act_report_xml_view1"/>
             <field name="arch" type="xml">
                 <field name="content_fname" position="after">
-                    <field name="printer_id" context="{'view_all':True}" colspan="4" widget="selection"/>
+                    <field name="printer_id" context="{'view_all':True}" widget="selection"/>
                 </field>
             </field>
         </record>

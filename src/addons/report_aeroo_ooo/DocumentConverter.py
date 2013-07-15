@@ -13,17 +13,9 @@
 #
 
 DEFAULT_OPENOFFICE_PORT = 8100
-DEFAULT_OPENOFFICE_PATH = [
-    "C:\Program Files\OpenOffice.org 3\Basis\program",
-    "C:\Program Files\OpenOffice.org 3\program",
-    "C:\Program Files\OpenOffice.org 3\URE\bin"]
-
-DEFAULT_OPENOFFICE_PATH_AMD64 = [
-    "C:\Program Files (x86)\OpenOffice.org 3\Basis\program",
-    "C:\Program Files (x86)\OpenOffice.org 3\program",
-    "C:\Program Files (x86)\OpenOffice.org 3\URE\bin"]
 
 ################## For CSV documents #######################
+# Field Separator (1), 	Text Delimiter (2), 	Character Set (3), 	Number of First Line (4)
 CSVFilterOptions = "59,34,76,1"
 # ASCII code of field separator
 # ASCII code of text delimiter
@@ -44,21 +36,6 @@ try:
 except ImportError:
     from StringIO import StringIO
 
-_logger = logging.getLogger(__name__)
-
-if sys.platform=='win32':
-    import _winreg
-    import platform
-    try:
-        key = _winreg.OpenKey(_winreg.HKEY_LOCAL_MACHINE, 'SYSTEM\CurrentControlSet\Control\Session Manager\Environment')
-        python_path = _winreg.QueryValueEx(key, "PYTHONPATH")[0].split(';')
-        if python_path:
-            sys.path.extend(python_path)
-        else:
-            sys.path.extend(platform.machine()=='x86' and DEFAULT_OPENOFFICE_PATH or DEFAULT_OPENOFFICE_PATH_AMD64)
-    except WindowsError, e:
-        sys.path.extend(platform.machine()=='x86' and DEFAULT_OPENOFFICE_PATH or DEFAULT_OPENOFFICE_PATH_AMD64)
-
 import uno
 import unohelper
 from com.sun.star.beans import PropertyValue
@@ -69,6 +46,8 @@ from com.sun.star.lang import IllegalArgumentException
 from com.sun.star.io import XOutputStream
 from com.sun.star.io import IOException
 from tools.translate import _
+
+logger = logging.getLogger(__name__)
 
 class DocumentConversionException(Exception):
 
@@ -226,18 +205,18 @@ class DocumentConverter:
 
     def _restart_ooo(self):
         if not self._ooo_restart_cmd:
-            _logger.warning('No LibreOffice/OpenOffice restart script configured')
+            logger.warning('No LibreOffice/OpenOffice restart script configured')
             return False
-        _logger.info('Restarting LibreOffice/OpenOffice background process')
+        logger.info('Restarting LibreOffice/OpenOffice background process')
         try:
-            _logger.info('Executing restart script "%s"' % self._ooo_restart_cmd)
+            logger.info('Executing restart script "%s"' % self._ooo_restart_cmd)
             retcode = subprocess.call(self._ooo_restart_cmd, shell=True)
             if retcode == 0:
-                _logger.warning('Restart successfull')
+                logger.warning('Restart successfull')
                 time.sleep(4) # Let some time for LibO/OOO to be fully started
             else:
-                _logger.error('Restart script failed with return code %d' % retcode)
+                logger.error('Restart script failed with return code %d' % retcode)
         except OSError, e:
-            _logger.error('Failed to execute the restart script. OS error: %s' % e)
+            logger.error('Failed to execute the restart script. OS error: %s' % e)
         return True
 

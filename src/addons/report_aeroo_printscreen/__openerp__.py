@@ -1,6 +1,6 @@
 ##############################################################################
 #
-# Copyright (c) 2008-2011 Alistek Ltd (http://www.alistek.com) All Rights Reserved.
+# Copyright (c) 2008-2013 Alistek Ltd (http://www.alistek.com) All Rights Reserved.
 #                    General contacts <info@alistek.com>
 #
 # WARNING: This program as such is intended to be used by professional
@@ -40,10 +40,10 @@ Using report_aeroo_ooo OpenERP module by Alistek, you can set output to one of t
 """,
     'author': 'Alistek Ltd',
     'website': 'http://www.alistek.com',
-    'complexity': "easy",
     'depends': ['base','report_aeroo'],
     "init_xml" : [],
     'update_xml': ['data/report_aeroo_printscreen_data.xml'],
+    'js': ['static/src/js/report_aeroo_printscreen.js'],
     "license" : "GPL-3 or any later version",
     'installable': True,
     'active': False,

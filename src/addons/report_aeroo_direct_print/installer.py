@@ -37,7 +37,7 @@ import os, base64
 import cups
 import urllib2
 
-_url = 'http://www.alistek.com/aeroo_banner/v6_1_report_aeroo_direct_print.png'
+_url = 'http://www.alistek.com/aeroo_banner/v6_0_report_aeroo_direct_print.png'
 
 class aeroo_printer_installer(osv.osv_memory):
     _name = 'aeroo_printer.installer'
@@ -116,7 +116,15 @@ class aeroo_printer_installer(osv.osv_memory):
                                              }, context=context)
                 conn_printers.append((1, printer.id, {'state':'connected'}))
 
-        return this.write({'state':'done','printer_ids':conn_printers})
+        self.write(cr, uid, ids, {'state':'done','printer_ids':conn_printers}, context=context)
+
+        mod_obj = self.pool.get('ir.model.data')
+        act_obj = self.pool.get('ir.actions.act_window')
+        result = mod_obj.get_object_reference(cr, uid, 'report_aeroo_direct_print', 'action_aeroo_printer_installer')
+        id = result and result[1] or False
+        result = act_obj.read(cr, uid, id, context=context)
+        result['res_id'] = ids[0]
+        return result
 
     _defaults = {
         'state':'init',

@@ -47,7 +47,7 @@ from report_aeroo_ooo.DocumentConverter import DocumentConversionException
 from report_aeroo_ooo.report import OpenOffice_service
 from report_aeroo.report_aeroo import aeroo_lock
 
-_url = 'http://www.alistek.com/aeroo_banner/v6_1_report_aeroo_ooo.png'
+_url = 'http://www.alistek.com/aeroo_banner/v7_0_report_aeroo_ooo.png'
 
 class aeroo_config_installer(osv.osv_memory):
     _name = 'aeroo_config.installer'
@@ -145,7 +145,15 @@ class aeroo_config_installer(osv.osv_memory):
             msg = _('Connection to OpenOffice.org instance was not established or convertion to PDF unsuccessful!')
         else:
             msg = _('Connection to the OpenOffice.org instance was successfully established and PDF convertion is working.')
-        return self.write(cr, uid, ids, {'msg':msg,'error_details':error_details,'state':state})
+        self.write(cr, uid, ids, {'msg':msg,'error_details':error_details,'state':state})
+
+        mod_obj = self.pool.get('ir.model.data')
+        act_obj = self.pool.get('ir.actions.act_window')
+        result = mod_obj.get_object_reference(cr, uid, 'report_aeroo_ooo', 'action_aeroo_config_wizard')
+        id = result and result[1] or False
+        result = act_obj.read(cr, uid, id, context=context)
+        result['res_id'] = ids[0]
+        return result
 
     _defaults = {
         'config_logo': _get_image,
@@ -155,6 +163,4 @@ class aeroo_config_installer(osv.osv_memory):
         'state':'init',
         'link':'http://www.alistek.com/wiki/index.php/Aeroo_Reports_Linux_server#Installation_.28Dependencies_and_Base_system_setup.29',
     }
-
-aeroo_config_installer()
 

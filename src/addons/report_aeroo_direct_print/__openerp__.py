@@ -32,6 +32,7 @@
 
 { 
     'name': 'Aeroo Reports - Direct printing to printer',
+    'summary': 'Print Aeroo Reports directly to a printer',
     'version': '1.2',
     'category': 'Generic Modules/Aeroo Reporting',
     'description': """Direct Print module for Aeroo Reports enables printing a report directly to

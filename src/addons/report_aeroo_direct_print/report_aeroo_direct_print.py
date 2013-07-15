@@ -81,12 +81,13 @@ class report_print_actions(osv.osv_memory):
             while(this.copies):
                 print_ids.extend(this.print_ids)
                 this.copies -= 1
-        if report_xml.out_format.id != this.out_format:
+        if str(report_xml.out_format.id) != this.out_format:
             report_xml.write({'out_format':this.out_format}, context=context)
         if self.check_if_deferred(report_xml, this.print_ids):
-            return this.write({'state':'confirm','message':_("This process may take too long for interactive processing. \
+            this.write({'state':'confirm','message':_("This process may take too long for interactive processing. \
 It is advisable to defer the process in background. \
 Do you want to start a deferred process?"),'print_ids':print_ids}, context=context)
+            return self._reopen(this.id, this._model)
 
         data = {'model':report_xml.model, 'ids':print_ids, 'id':context['active_id'], 'report_type': 'aeroo'}
         context['aeroo_dont_print_to_pinter'] = True

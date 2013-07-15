@@ -5,7 +5,6 @@
     <record id="act_report_xml_view_aeroo_ooo" model="ir.ui.view">
         <field name="name">ir.actions.report.xml.aeroo.form1</field>
         <field name="model">ir.actions.report.xml</field>
-        <field name="type">form</field>
 		<field name="inherit_id" ref="report_aeroo.act_report_xml_view1"/>
         <field name="arch" type="xml">
             <data>
@@ -30,7 +29,7 @@
       <field name="context">{'menu':True}</field>
     </record>
 
-	<menuitem id="menu_oo_config_wizard" action="action_aeroo_config_wizard" icon="STOCK_CONVERT" parent="report_aeroo.menu_ir_action_aeroo_reports_xml"/>
+	<menuitem id="menu_oo_config_wizard" action="action_aeroo_config_wizard" parent="report_aeroo.menu_ir_action_aeroo_reports_xml"/>
 
     </data>
 </openerp>

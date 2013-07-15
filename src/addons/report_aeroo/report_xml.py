@@ -30,6 +30,7 @@
 ##############################################################################
 
 from osv import osv,fields
+from osv.orm import transfer_modifiers_to_node
 import netsvc
 from report_aeroo import Aeroo_report, aeroo_ooo_test
 from report.report_sxw import rml_parse
@@ -56,8 +57,6 @@ class report_stylesheets(osv.osv):
         
     }
 
-report_stylesheets()
-
 class res_company(osv.osv):
     _name = 'res.company'
     _inherit = 'res.company'
@@ -65,8 +64,6 @@ class res_company(osv.osv):
     _columns = {
         'stylesheet_id':fields.many2one('report.stylesheets', 'Aeroo Global Stylesheet'),
     }
-
-res_company()
 
 class report_mimetypes(osv.osv):
     '''
@@ -82,8 +79,6 @@ class report_mimetypes(osv.osv):
         'filter_name':fields.char('Filter Name', size=128, readonly=True),
         
     }
-
-report_mimetypes()
 
 class report_xml(osv.osv):
     _name = 'ir.actions.report.xml'
@@ -235,7 +230,7 @@ class report_xml(osv.osv):
         if OpenOffice_service:
             cr.execute("SELECT id, state FROM ir_module_module WHERE name='report_aeroo_ooo'")
             helper_module = cr.dictfetchone()
-            helper_installed = helper_module['state']=='installed'
+            helper_installed = helper_module and helper_module['state']=='installed'
 
         if OpenOffice_service and helper_installed:
             cr.execute("SELECT host, port FROM oo_config")
@@ -265,7 +260,7 @@ class report_xml(osv.osv):
         res = orig_ids and super(report_xml, self)._report_content(cursor, 1, orig_ids, name, arg, context) or {}
         for report in self.read(cursor, 1, aeroo_ids, ['tml_source','report_type','report_sxw_content_data', 'report_sxw'], context=context):
             data = report[name + '_data']
-            if report['tml_source']=='file' or not data and report[name[:-8]]:
+            if report['report_type']=='aeroo' and report['tml_source']=='file' or not data and report[name[:-8]]:
                 fp = None
                 try:
                     fp = tools.file_open(report[name[:-8]], mode='rb')
@@ -388,9 +383,10 @@ class report_xml(osv.osv):
             if not (deferred_proc_module and deferred_proc_module['state'] in ('installed', 'to upgrade')):
                 doc = etree.XML(res['arch'])
                 deferred_node = doc.xpath("//field[@name='deferred']")
-                deferred_node[0].attrib['invisible'] = '1'
+                modifiers = {'invisible': True}
+                transfer_modifiers_to_node(modifiers, deferred_node[0])
                 deferred_limit_node = doc.xpath("//field[@name='deferred_limit']")
-                deferred_limit_node[0].attrib['invisible'] = '1'
+                transfer_modifiers_to_node(modifiers, deferred_limit_node[0])
                 res['arch'] = etree.tostring(doc)
             ############################################
         return res
@@ -437,7 +433,7 @@ class report_xml(osv.osv):
                 for act_win in act_win_obj.browse(cr, uid, act_win_ids, context=context):
                     act_win_context = eval(act_win.context, {})
                     if act_win_context.get('report_action_id')==r['id']:
-                        act_win.unlink(context)
+                        act_win.unlink()
             else:
                 ir_value_ids = self.pool.get('ir.values').search(cr, uid, [('value','=','ir.actions.report.xml,%s' % r['id'])])
                 if ir_value_ids:
@@ -657,6 +653,4 @@ class report_xml(osv.osv):
         'deferred': 'off',
         'deferred_limit': 80,
     }
-
-report_xml()
 

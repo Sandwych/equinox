@@ -37,7 +37,7 @@ import tools
 import os, base64
 import urllib2
 
-_url = 'http://www.alistek.com/aeroo_banner/v6_1_report_aeroo.png'
+_url = 'http://www.alistek.com/aeroo_banner/v7_0_report_aeroo.png'
 
 class report_aeroo_installer(osv.osv_memory):
     _name = 'report.aeroo.installer'

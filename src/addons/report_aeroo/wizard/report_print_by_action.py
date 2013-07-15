@@ -61,5 +61,3 @@ class report_print_by_action(osv.osv_memory):
         'name': _get_model,
     }
 
-report_print_by_action()
-

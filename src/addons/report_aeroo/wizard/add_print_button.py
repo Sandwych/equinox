@@ -38,6 +38,15 @@ special_reports = [
     'printscreen.list'
 ]
 
+def _reopen(self, res_id, model):
+    return {'type': 'ir.actions.act_window',
+            'view_mode': 'form',
+            'view_type': 'form',
+            'res_id': res_id,
+            'res_model': self._name,
+            'target': 'new',
+    }
+
 class aeroo_add_print_button(osv.osv_memory):
     '''
     Add Print Button
@@ -66,14 +75,14 @@ class aeroo_add_print_button(osv.osv_memory):
 	            return 'exist'
 
     def do_action(self, cr, uid, ids, context):
-        data = self.browse(cr, uid, ids[0], context=context)
+        this = self.browse(cr, uid, ids[0], context=context)
         report = self.pool.get(context['active_model']).browse(cr, uid, context['active_id'], context=context)
         event_id = self.pool.get('ir.values').set_action(cr, uid, report.report_name, 'client_print_multi', report.model, 'ir.actions.report.xml,%d' % context['active_id'])
         if report.report_wizard:
             report._set_report_wizard(report.id)
-        data.write({'state':'done'}, context=context)
-        if not data.open_action:
-            return ids
+        this.write({'state':'done'}, context=context)
+        if not this.open_action:
+            return _reopen(self, this.id, this._model)
 
         mod_obj = pooler.get_pool(cr.dbname).get('ir.model.data')
         act_obj = pooler.get_pool(cr.dbname).get('ir.actions.act_window')
