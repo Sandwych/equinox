@@ -1,3 +1,6 @@
+/* 
+ * 此处代码参考： http://shine-it.net/index.php/topic,5975.msg14960.html
+ * */
 .openerp .oe_topbar {
     position: fixed;
     z-index: 1049;    
