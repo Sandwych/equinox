@@ -31,10 +31,11 @@
         1. 将默认的本位币从欧元设置为人民币，并调整汇率
         2. 重新设置公司的页眉页脚解决乱码问题
     """,
-    "depends" : ['base', 'sandwych_pdf_zhcn'],
+    "depends" : ['base', 'web', 'sandwych_pdf_zhcn'],
     "category" : "Generic Modules/Base",
     "demo_xml" : [],
     "update_xml" : ['base_data.xml'],
+    'css': ['static/src/css/fix_top_menu.css'],
     "license": "GPL-3",
     "installable": True,
     "auto_install": False,

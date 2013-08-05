@@ -1,0 +1,20 @@
+.openerp .oe_topbar {
+    position: fixed;
+    z-index: 1049;    
+    filter:alpha(Opacity=80);  /*再加点透明效果*/
+    -moz-opacity:0.8;
+    opacity: 0.8;
+}
+
+.openerp .oe_leftbar {
+    padding-top: 32px;
+}
+
+
+.openerp .oe_application {
+    padding-top: 32px;
+}
+
+.openerp .oe_footer {
+    display: none;
+}
