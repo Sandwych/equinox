@@ -10,10 +10,10 @@
             <field name="inherit_id" ref="hr_contract.hr_contract_view_form"/>
             <field name="arch" type="xml">
             <data>
-                 <xpath expr="/form/notebook/page[@name='information']/group[@name='right_column']/field[@name='struct_id']" position="after">
+                <xpath expr="//field[@name='wage']" position="after">
                     <field name="pit_exemption_amount"/>
                     <field name="social_insurance_amount"/>
-                 </xpath>
+                </xpath>
             </data>
             </field>
         </record>
