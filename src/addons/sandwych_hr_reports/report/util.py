@@ -1,5 +1,7 @@
 #encoding: utf-8
 
+from cStringIO import StringIO
+import math
 
 # 分页函数
 # items 为要分页的条目们
@@ -10,34 +12,91 @@ def paginate(items, max_per_page=5):
     return int(ceil(float(count) / max_per_page))
 
 # 人民币大写
-# 来自：http://topic.csdn.net/u/20091129/20/b778a93d-9f8f-4829-9297-d05b08a23f80.html
 # 传入浮点类型的值返回 unicode 字符串
-def rmb_upper(value):
-    map  = [u"零",u"壹",u"贰",u"叁",u"肆",u"伍",u"陆",u"柒",u"捌",u"玖"]
-    unit = [u"分",u"角",u"元",u"拾",u"百",u"千",u"万",u"拾",u"百",u"千",u"亿",
-            u"拾",u"百",u"千",u"万",u"拾",u"百",u"千",u"兆"]
-    
-    nums = []   #取出每一位数字，整数用字符方式转换避大数出现误差   
-    for i in xrange(len(unit)-3, -3, -1):
-        if value >= 10**i or i < 1:
-            nums.append(int(round(value/(10**i),2))%10)
-            
-    words = []
-    zflag = 0   #标记连续0次数，以删除万字，或适时插入零字
-    start = len(nums)-3     
-    for i in xrange(start, -3, -1):   #使i对应实际位数，负数为角分
-        if 0 != nums[start-i] or len(words) == 0:
-            if zflag:
-                words.append(map[0])
-                zflag = 0
-            words.append(map[nums[start-i]])
-            words.append(unit[i+2])
-        elif 0 == i or (0 == i%4 and zflag < 3): #控制‘万/元’
-            words.append(unit[i+2])
-            zflag = 0
+_RMB_DIGITS = ['零', '壹', '贰', '叁', '肆', '伍', '陆', '柒', '捌', '玖' ]
+_SECTION_CHARS = ['', '拾', '佰', '仟', '万' ]
+
+def rmb_upper(price):
+    price = round(price, 2)
+    integer_part = int(price)
+    wanyi_part = integer_part / 1000000000000
+    yi_part = integer_part % 1000000000000 / 100000000
+    wan_part = integer_part % 100000000 / 10000
+    qian_part = integer_part % 10000
+    dec_part = int(price * 100 % 100)
+
+    strio = StringIO()
+
+    zero_count = 0
+    #处理万亿以上的部分
+    if integer_part >= 1000000000000 and wanyi_part > 0:
+        zero_count = _parse_integer(strio, wanyi_part, zero_count, True)
+        strio.write('万')
+
+    #处理亿到千亿的部分
+    if integer_part >= 100000000 and yi_part > 0:
+        is_first_section = integer_part >= 100000000 and integer_part < 1000000000000 
+        zero_count = _parse_integer(strio, yi_part, zero_count, is_first_section)
+        strio.write('亿')
+
+    #处理万的部分
+    if integer_part >= 10000 and wan_part > 0:
+        is_first_section = integer_part >= 1000 and integer_part < 10000000 
+        zero_count = _parse_integer(strio, wan_part, zero_count, is_first_section)
+        strio.write('万')
+
+    #处理千及以后的部分
+    if qian_part > 0:
+        is_first_section = integer_part < 1000
+        zero_count = _parse_integer(strio, qian_part, zero_count, is_first_section)
+    else:
+        zero_count += 1
+    if integer_part > 0:
+        strio.write('元')
+
+    #处理小数
+    if dec_part > 0: 
+        _parse_decimal(strio, integer_part, dec_part, zero_count)
+    elif dec_part == 0 and integer_part > 0:
+        strio.write('整')
+    else:
+        strio.write('零元整')
+
+    return strio.getvalue()
+
+def _parse_integer(strio, value, zero_count = 0, is_first_section = False):
+    assert value > 0 and value <= 9999
+    ndigits = int(math.floor(math.log10(value))) + 1
+    if value < 1000 and not is_first_section:
+        zero_count += 1
+    for i in xrange(0, ndigits):
+        factor = int(pow(10, ndigits - 1 - i))
+        digit = int(value / factor)
+        if digit != 0:
+            if zero_count > 0:
+                strio.write('零')
+            strio.write(_RMB_DIGITS[digit])
+            strio.write(_SECTION_CHARS[ndigits - i - 1])
+            zero_count = 0
         else:
-            zflag += 1
-            
-    if words[-1] != unit[0]:    #结尾非‘分’补整字
-        words.append(u"整")
-    return ''.join(words)
+            zero_count += 1
+        value -= value / factor * factor
+    return zero_count
+
+def _parse_decimal(strio, integer_part, value, zero_count):
+    assert value > 0 and value <= 99
+    jiao = value / 10
+    fen = value % 10
+    if zero_count > 0 and (jiao > 0 or fen > 0) and integer_part > 0:
+        strio.write('零')
+    if jiao > 0:
+        strio.write(_RMB_DIGITS[jiao])
+        strio.write('角')
+    if zero_count == 0 and jiao == 0 and fen > 0 and integer_part > 0:
+        strio.write('零')
+    if fen > 0:
+        strio.write(_RMB_DIGITS[fen])
+        strio.write('分')
+    else:
+        strio.write('整')
+
