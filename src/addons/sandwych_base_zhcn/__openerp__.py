@@ -35,7 +35,7 @@
     "category" : "Generic Modules/Base",
     "demo_xml" : [],
     "update_xml" : ['base_data.xml'],
-    'css': ['static/src/css/fix_top_menu.css'],
+    'js': ['static/src/js/announcement.js'],
     "license": "GPL-3",
     "installable": True,
     "auto_install": False,
