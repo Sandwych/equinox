@@ -8,7 +8,7 @@
 #
 ################################################################################
 
-from report_aeroo.ctt_objects import ctt_language
+from openerp.addons.report_aeroo.ctt_objects import ctt_language
 
 class lt_LT(ctt_language):
     def _init_lang(self):

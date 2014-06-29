@@ -30,10 +30,10 @@
 #
 ##############################################################################
 
-from osv import fields
-from osv import osv
-import netsvc
-import tools
+from openerp.osv import fields
+from openerp.osv import osv
+from openerp import netsvc
+from openerp import tools
 import os, base64
 import urllib2
 

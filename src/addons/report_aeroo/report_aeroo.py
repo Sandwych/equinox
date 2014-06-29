@@ -34,9 +34,10 @@
 
 import os, sys, traceback
 from tempfile import NamedTemporaryFile
-import report
-from report.report_sxw import report_sxw, report_rml, browse_record_list
-from report.pyPdf import PdfFileWriter, PdfFileReader
+from openerp import report
+from openerp.report.report_sxw import report_sxw, report_rml, browse_record_list
+from openerp.report.pyPdf import PdfFileWriter, PdfFileReader
+from openerp.addons.report_aeroo_ooo import report as rpt
 #import zipfile
 try:
     from cStringIO import StringIO
@@ -44,9 +45,9 @@ except ImportError:
     from StringIO import StringIO
 from xml.dom import minidom
 import base64
-from osv import osv
-from tools.translate import _
-import tools
+from openerp.osv import osv
+from openerp.tools.translate import _
+from openerp import tools
 import time
 import re
 import copy
@@ -57,14 +58,14 @@ try:
     from addons import load_information_from_description_file # for OpenERP 6.0.x
 except ImportError:
     from openerp.modules import load_information_from_description_file # for OpenERP 6.1
-import release
+from openerp import release
 
 import aeroolib
 from aeroolib.plugins.opendocument import Template, OOSerializer
 from genshi.template import NewTextTemplate
 from genshi import __version__ as genshi_version
-import pooler
-import netsvc
+from openerp import pooler
+from openerp import netsvc
 from lxml import etree
 import logging
 
@@ -134,7 +135,8 @@ class Aeroo_report(report_sxw):
         logger.log(level, message, exc_info=1)
 
     def __init__(self, cr, name, table, rml=False, parser=False, header=True, store=False):
-        super(Aeroo_report, self).__init__(name, table, rml, parser, header, store)
+        super(Aeroo_report, self).__init__(
+            name, table, rml, parser, header, store, register=False)
         self.logger("registering %s (%s)" % (name, table), logging.INFO)
         self.active_prints = {}
 
@@ -448,7 +450,12 @@ class Aeroo_report(report_sxw):
         aeroo_print.subreports = []
         #self.oo_subreports[print_id] = []
         objects = self.getObjects_mod(cr, uid, ids, report_xml.report_type, context) or []
-        oo_parser = self.parser(cr, uid, self.name2, context=context)
+        parser = report_xml.get_custom_parser(cr, uid, [report_xml.id], context=context)
+        if parser is None:
+            oo_parser = self.parser(cr, uid, self.name2, context=context)
+        else:
+            oo_parser = parser(cr,uid, self.name2, context=context)
+
         oo_parser.localcontext.update(context)
         oo_parser.set_context(objects, data, ids, report_xml.report_type)
 
@@ -525,15 +532,34 @@ class Aeroo_report(report_sxw):
         basic.Serializer.add_custom_property(module_info['website'], 'URL')
         basic.Serializer.add_creation_date(time.strftime('%Y-%m-%dT%H:%M:%S'))
 
+        # stream filter function for translation
+        def _translate_stream(stream):
+            for kind, data, pos in stream:
+                result = (kind, data, pos)
+                if kind == 'TEXT' and len(data) > 3:
+                    result = (
+                            kind,
+                            pool.get('ir.translation')._get_source(
+                                cr, uid, report_xml.report_name,
+                                report_xml.report_type,
+                                oo_parser.localcontext.get('lang',
+                                    oo_parser.localcontext['user_lang']),
+                                data),
+                            pos)
+                yield result
+
         try:
-            data = basic.generate(**oo_parser.localcontext).render().getvalue()
+            data = basic.generate(**oo_parser.localcontext)\
+                    .filter(_translate_stream)\
+                    .render().getvalue()
         except osv.except_osv, e:
             raise
         except Exception, e:
             self._raise_exception(e, print_id)
 
         ######### OpenOffice extras #########
-        DC = netsvc.Service._services.get('openoffice')
+        #DC = netsvc.Service._services.get('openoffice')
+        DC = rpt.OpenOffice_service(cr, 'localhost', 8100)
         #if (output!=report_xml.in_format[3:] or self.oo_subreports.get(print_id)):
         if output!=report_xml.in_format[3:] or aeroo_print.subreports:
             if aeroo_ooo and DC:
@@ -733,7 +759,7 @@ class Aeroo_report(report_sxw):
                      self.logger(_("Create attachment error!")+'\n'+str(e), logging.ERROR)
                 results.append(result)
 
-        DC = netsvc.Service._services.get('openoffice')
+        DC = rpt.OpenOffice_service(cr, 'localhost', 8100)
         if results and len(results)==1:
             return results[0]
         elif results and DC:

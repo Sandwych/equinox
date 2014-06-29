@@ -45,7 +45,7 @@ from com.sun.star.beans import UnknownPropertyException
 from com.sun.star.lang import IllegalArgumentException
 from com.sun.star.io import XOutputStream
 from com.sun.star.io import IOException
-from tools.translate import _
+from openerp.tools.translate import _
 
 logger = logging.getLogger(__name__)
 

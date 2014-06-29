@@ -69,10 +69,12 @@ if sys.platform=='win32':
 from check_deps import check_deps
 check_deps(check_list)
 
-import installer
-import report
 try:
     import DocumentConverter
 except ImportError, e:
     print e
+
+import installer
+import report
+
 

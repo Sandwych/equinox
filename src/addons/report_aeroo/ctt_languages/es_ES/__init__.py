@@ -7,7 +7,7 @@
 #       * Christopher Ormaza - Ecuadorenlinea.net <chris.ormaza@gmail.com>, 2011
 ################################################################################
 
-from report_aeroo.ctt_objects import ctt_language
+from openerp.addons.report_aeroo.ctt_objects import ctt_language
 
 class es_ES(ctt_language):
     def _init_lang(self):

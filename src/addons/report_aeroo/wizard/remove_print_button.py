@@ -29,10 +29,10 @@
 #
 ##############################################################################
 
-import pooler
-from tools.translate import _
-from osv import osv
-from osv import fields
+from openerp import pooler
+from openerp.tools.translate import _
+from openerp.osv import osv
+from openerp.osv import fields
 
 def ir_del(cr, uid, id):
     obj = pooler.get_pool(cr.dbname).get('ir.values')

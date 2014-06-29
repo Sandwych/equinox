@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf8 -*-
 
-from report_aeroo.ctt_objects import ctt_currency
+from openerp.addons.report_aeroo.ctt_objects import ctt_currency
 
 class lvl(ctt_currency):
     def _init_currency(self):

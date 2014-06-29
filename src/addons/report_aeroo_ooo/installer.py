@@ -30,10 +30,10 @@
 #
 ##############################################################################
 
-from osv import fields
-from osv import osv
-import netsvc
-import tools
+from openerp.osv import fields
+from openerp.osv import osv
+import openerp.netsvc
+import openerp.tools
 from xml.dom import minidom
 import os, base64
 import urllib2
@@ -41,13 +41,14 @@ try:
     from cStringIO import StringIO
 except ImportError:
     from StringIO import StringIO
-from tools.translate import _
+from openerp.tools.translate import _
 
-from report_aeroo_ooo.DocumentConverter import DocumentConversionException
-from report_aeroo_ooo.report import OpenOffice_service
-from report_aeroo.report_aeroo import aeroo_lock
+from DocumentConverter import DocumentConversionException
 
 _url = 'http://www.alistek.com/aeroo_banner/v7_0_report_aeroo_ooo.png'
+
+import threading
+aeroo_lock = threading.Lock()
 
 class aeroo_config_installer(osv.osv_memory):
     _name = 'aeroo_config.installer'
@@ -64,7 +65,7 @@ class aeroo_config_installer(osv.osv_memory):
                 raise TypeError(im.headers.maintype)
         except Exception, e:
             path = os.path.join('report_aeroo','config_pixmaps','module_banner.png')
-            image_file = file_data = tools.file_open(path,'rb')
+            image_file = file_data = openerp.tools.file_open(path,'rb')
             try:
                 file_data = image_file.read()
                 self._logo_image = base64.encodestring(file_data)
@@ -120,10 +121,10 @@ class aeroo_config_installer(osv.osv_memory):
             config_id = config_obj.create(cr, 1, data, context=context)
 
         try:
-            fp = tools.file_open('report_aeroo_ooo/test_temp.odt', mode='rb')
+            fp = openerp.tools.file_open('report_aeroo_ooo/test_temp.odt', mode='rb')
             file_data = fp.read()
-            DC = netsvc.Service._services.setdefault('openoffice', \
-                    OpenOffice_service(cr, data['host'], data['port']))
+            DC = openerp.addons.report_aeroo_ooo.report.OpenOffice_service(cr, data['host'], data['port'])
+            #DC = openerp.netsvc.Service._services.setdefault('openoffice', OpenOffice_service(cr, data['host'], data['port']))
             with aeroo_lock:
                 DC.putDocument(file_data)
                 DC.saveByStream()
@@ -131,7 +132,7 @@ class aeroo_config_installer(osv.osv_memory):
                 DC.closeDocument()
                 del DC
         except DocumentConversionException, e:
-            netsvc.Service.remove('openoffice')
+            openerp.netsvc.Service.remove('report.openoffice')
             error_details = str(e)
             state = 'error'
         except Exception, e:

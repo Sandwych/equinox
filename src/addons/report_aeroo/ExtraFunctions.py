@@ -31,19 +31,19 @@
 ##############################################################################
 
 from barcode import barcode
-from tools import translate
+from openerp.tools import translate
 #from currency_to_text import currency_to_text
 from ctt_objects import supported_language
 import base64
 import StringIO
 from PIL import Image
-import pooler
+from openerp import pooler
 import time
-import osv
-from report import report_sxw
-from tools.translate import _
-import netsvc
-from tools.safe_eval import safe_eval as eval
+from openerp.osv.orm import browse_null, browse_record
+from openerp.report import report_sxw
+from openerp.tools.translate import _
+from openerp import netsvc
+from openerp.tools.safe_eval import safe_eval as eval
 from aeroolib.plugins.opendocument import _filter
 
 try:
@@ -159,9 +159,9 @@ class ExtraFunctions(object):
         }
 
     def __filter(self, val):
-        if isinstance(val, osv.orm.browse_null):
+        if isinstance(val, browse_null):
             return ''
-        elif isinstance(val, osv.orm.browse_record):
+        elif isinstance(val, browse_record):
             return val.name_get({'lang':self._get_lang()})[0][1]
         return _filter(val)
 
@@ -280,7 +280,7 @@ class ExtraFunctions(object):
         return localspace['value_list']
 
     def _get_name(self, obj):
-        if obj.__class__==osv.orm.browse_record:
+        if obj.__class__== browse_record:
             return self.pool.get(obj._table_name).name_get(self.cr, self.uid, [obj.id], {'lang':self._get_lang()})[0][1]
         elif type(obj)==str: # only for fields in root record
             model = self.context['model']

@@ -29,20 +29,16 @@
 #
 ##############################################################################
 
-from report import report_sxw
-from report.report_sxw import rml_parse
-import lorem
-import random
+from openerp.report import report_sxw
 
 class Parser(report_sxw.rml_parse):
     def __init__(self, cr, uid, name, context):
         super(Parser, self).__init__(cr, uid, name, context)
         self.localcontext.update({
-            'lorem':lorem.do_lorem,
-            'random':random,
-            'hello_world':self.hello_world,
+            'hello_world': self._hello_world,
         })
 
-    def hello_world(self, name):
-        return "Hello, %s!" % name
+    def _hello_world(self, name):
+        return "Hello guy, %s!" % name
+
 

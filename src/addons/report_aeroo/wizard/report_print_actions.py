@@ -29,11 +29,11 @@
 #
 ##############################################################################
 
-from osv import osv
-from osv import fields
-import netsvc
+from openerp.osv import osv
+from openerp.osv import fields
+from openerp import netsvc
 
-from tools.translate import _
+from openerp.tools.translate import _
 
 class report_print_actions(osv.osv_memory):
     _name = 'aeroo.print_actions'

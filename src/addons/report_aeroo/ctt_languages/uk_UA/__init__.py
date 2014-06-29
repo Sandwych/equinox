@@ -2,7 +2,7 @@
 # -*- coding: utf8 -*-
 # uk_UA
 
-from report_aeroo.ctt_objects import ctt_language
+from openerp.addons.report_aeroo.ctt_objects import ctt_language
 
 class uk_UA(ctt_language):
     def _init_lang(self):
