@@ -31,7 +31,7 @@
         1. 将默认的本位币从欧元设置为人民币，并调整汇率
         2. 重新设置公司的页眉页脚解决乱码问题
     """,
-    "depends" : ['base', 'web', 'sandwych_pdf_zhcn'],
+    "depends" : ['base', 'web'],
     "category" : "Generic Modules/Base",
     "demo_xml" : [],
     "update_xml" : ['base_data.xml'],
