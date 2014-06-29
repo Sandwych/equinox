@@ -559,7 +559,8 @@ class Aeroo_report(report_sxw):
 
         ######### OpenOffice extras #########
         #DC = netsvc.Service._services.get('openoffice')
-        DC = rpt.OpenOffice_service(cr, 'localhost', 8100)
+        #DC = rpt.OpenOffice_service(cr, 'localhost', 8100)
+        DC = False
         #if (output!=report_xml.in_format[3:] or self.oo_subreports.get(print_id)):
         if output!=report_xml.in_format[3:] or aeroo_print.subreports:
             if aeroo_ooo and DC:
@@ -759,7 +760,8 @@ class Aeroo_report(report_sxw):
                      self.logger(_("Create attachment error!")+'\n'+str(e), logging.ERROR)
                 results.append(result)
 
-        DC = rpt.OpenOffice_service(cr, 'localhost', 8100)
+        #DC = rpt.OpenOffice_service(cr, 'localhost', 8100)
+        DC = False
         if results and len(results)==1:
             return results[0]
         elif results and DC:
