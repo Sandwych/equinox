@@ -35,6 +35,7 @@
     "category" : "Generic Modules/Base",
     "demo_xml" : [],
     "update_xml" : ['base_data.xml'],
+    "data" : ['views/announcement.xml'],
     'js': ['static/src/js/announcement.js'],
     "license": "GPL-3",
     "installable": True,
