@@ -19,10 +19,10 @@
 #
 ##############################################################################
 
-from osv import fields, osv
-import decimal_precision as dp
+from openerp.osv import osv, fields
+from openerp.addons import decimal_precision as dp
 
-class hr_contract_cn(osv.osv):
+class hr_contract_cn(osv.Model):
     _inherit = 'hr.contract'
 
     _columns = {
