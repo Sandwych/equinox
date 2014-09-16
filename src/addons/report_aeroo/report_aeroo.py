@@ -35,7 +35,8 @@
 import os, sys, traceback
 from tempfile import NamedTemporaryFile
 from openerp import report
-from openerp.report.report_sxw import report_sxw, report_rml, browse_record_list
+from openerp.report.report_sxw import report_sxw, report_rml
+from openerp.osv.orm import browse_record_list
 from openerp.report.pyPdf import PdfFileWriter, PdfFileReader
 from openerp.addons.report_aeroo_ooo import report as rpt
 #import zipfile
@@ -559,8 +560,7 @@ class Aeroo_report(report_sxw):
 
         ######### OpenOffice extras #########
         #DC = netsvc.Service._services.get('openoffice')
-        #DC = rpt.OpenOffice_service(cr, 'localhost', 8100)
-        DC = False
+        DC = rpt.OpenOffice_service(cr, 'localhost', 8100)
         #if (output!=report_xml.in_format[3:] or self.oo_subreports.get(print_id)):
         if output!=report_xml.in_format[3:] or aeroo_print.subreports:
             if aeroo_ooo and DC:
@@ -760,8 +760,7 @@ class Aeroo_report(report_sxw):
                      self.logger(_("Create attachment error!")+'\n'+str(e), logging.ERROR)
                 results.append(result)
 
-        #DC = rpt.OpenOffice_service(cr, 'localhost', 8100)
-        DC = False
+        DC = rpt.OpenOffice_service(cr, 'localhost', 8100)
         if results and len(results)==1:
             return results[0]
         elif results and DC:
